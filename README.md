@@ -9,6 +9,8 @@ A mobile-friendly branching narrative roleplaying game starter built with React,
 - Human appearance fields
 - G1-style Cybertronian frame appearance fields
 - Cybertronian alternate-mode categories and specific forms
+- Two player-named persistent friends
+- Separate relationship tracking for each friend
 - Human 1984 opening
 - Cybertronian early-war opening
 - Branching story engine
@@ -49,7 +51,7 @@ You can then run `supabase/seed.sql`, though the current prototype story is bund
 3. Story scenes loaded from Supabase instead of the local file
 4. Writer/admin scene editor
 5. Conditional appearance references in dialogue
-6. Persistent Prizm and Juci companion relationships
+6. Deeper friend personalities, reactions, and faction limits
 7. Faction membership progression
 8. Human conversion route
 9. Portrait and background storage
@@ -75,6 +77,12 @@ Each choice has:
 - `nextSceneId`
 - `requirements`
 - `effects`
+
+Story text may use these replacement tokens:
+
+- `{{player}}`
+- `{{friendOne}}`
+- `{{friendTwo}}`
 
 The engine supports:
 
