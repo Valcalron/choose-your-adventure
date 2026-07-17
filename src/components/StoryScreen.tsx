@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { HUMAN_OPENING } from "../data/humanOpening";
 import { STORY } from "../data/story";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
 import { saveGame } from "../services/saveService";
@@ -67,6 +68,9 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
     );
   }
 
+  const bodyText = state.currentSceneId === "HUMAN_START" ? HUMAN_OPENING : scene.body;
+  const bodyParagraphs = renderText(bodyText).split(/\n\s*\n/);
+
   return (
     <main className="screen story-screen">
       <section className="story-shell">
@@ -87,7 +91,9 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
 
         <article className="story-text">
           {scene.speaker && <div className="speaker">{renderText(scene.speaker)}</div>}
-          <p>{renderText(scene.body)}</p>
+          {bodyParagraphs.map((paragraph, index) => (
+            <p key={`${scene.id}-paragraph-${index}`}>{paragraph}</p>
+          ))}
         </article>
 
         {!scene.isEnding && (
