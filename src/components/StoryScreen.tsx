@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getLocationLabel, getOutageEffect } from "../data/humanLocation";
-import { STORY } from "../data/storyArkCommand";
+import { STORY } from "../data/storyChapters";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
 import { saveGame } from "../services/saveService";
 import type { GameState } from "../types/game";
@@ -92,6 +92,10 @@ Hound answers, “They stopped following individual Autobots and started studyin
     );
   }
 
+  const displayedChapter =
+    state.flags.chapter_one_complete === true
+      ? Math.max(2, scene.chapter)
+      : scene.chapter;
   const bodyParagraphs = renderText(scene.body).split(/\n\s*\n/);
 
   return (
@@ -100,7 +104,7 @@ Hound answers, “They stopped following individual Autobots and started studyin
         <header className="story-header">
           <div>
             <div className="chapter-label">
-              Chapter {scene.chapter} · Day {currentDay} · Hour {hourOfDay}
+              Chapter {displayedChapter} · Day {currentDay} · Hour {hourOfDay}
             </div>
             <h1>{renderText(scene.title)}</h1>
           </div>
