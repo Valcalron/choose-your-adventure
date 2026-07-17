@@ -28,6 +28,13 @@ export type HumanAppearance = {
   skinTone: string;
 };
 
+export type CaliforniaRegion = "Northern California" | "Central California" | "Southern California";
+
+export type HumanLocation = {
+  state: string;
+  californiaRegion?: CaliforniaRegion;
+};
+
 export type CybertronianAppearance = {
   frameHeight: string;
   frameBuild: string;
@@ -69,6 +76,7 @@ export type PlayerCharacter = {
   startingEra: "earth_1984" | "early_war";
   friends: [CompanionProfile, CompanionProfile];
   humanAppearance?: HumanAppearance;
+  humanLocation?: HumanLocation;
   cybertronianAppearance?: CybertronianAppearance;
   altMode?: AltMode;
   backgroundOrFunction: string;
