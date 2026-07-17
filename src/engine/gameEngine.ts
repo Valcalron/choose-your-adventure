@@ -9,6 +9,7 @@ import type {
 export const createInitialState = (character: PlayerCharacter): GameState => ({
   currentSceneId: character.origin === "human" ? "HUMAN_START" : "CYBER_START",
   character,
+  elapsedHours: 0,
   faction: {
     autobot: 0,
     decepticon: 0,
@@ -129,10 +130,12 @@ export const choose = (state: GameState, choice: StoryChoice): GameState => {
   }
 
   const withEffects = (choice.effects ?? []).reduce(applyEffect, state);
+  const hoursPassed = choice.timeCostHours ?? 1;
 
   return {
     ...withEffects,
     currentSceneId: choice.nextSceneId,
+    elapsedHours: (withEffects.elapsedHours ?? 0) + hoursPassed,
     history: [...withEffects.history, `${state.currentSceneId}:${choice.id}`]
   };
 };
