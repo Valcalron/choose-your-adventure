@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { HUMAN_OPENING } from "../data/humanOpening";
-import { STORY } from "../data/story";
+import { getLocationLabel, getOutageEffect } from "../data/humanLocation";
+import { STORY } from "../data/storyRuntime";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
 import { saveGame } from "../services/saveService";
 import type { GameState } from "../types/game";
@@ -22,7 +22,8 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
     text
       .replaceAll("{{player}}", state.character.name)
       .replaceAll("{{friendOne}}", friendOneName)
-      .replaceAll("{{friendTwo}}", friendTwoName);
+      .replaceAll("{{friendTwo}}", friendTwoName)
+      .replaceAll("{{outageEffect}}", getOutageEffect(state.character.humanLocation));
 
   const appearanceSummary = useMemo(() => {
     if (state.character.origin === "human" && state.character.humanAppearance) {
@@ -68,8 +69,7 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
     );
   }
 
-  const bodyText = state.currentSceneId === "HUMAN_START" ? HUMAN_OPENING : scene.body;
-  const bodyParagraphs = renderText(bodyText).split(/\n\s*\n/);
+  const bodyParagraphs = renderText(scene.body).split(/\n\s*\n/);
 
   return (
     <main className="screen story-screen">
@@ -85,6 +85,9 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
         <div className="character-strip">
           <strong>{state.character.name}</strong>
           <span>{appearanceSummary}</span>
+          {state.character.origin === "human" && (
+            <span>Home: {getLocationLabel(state.character.humanLocation)}</span>
+          )}
           <span>Friends: {friendOneName} and {friendTwoName}</span>
           {state.character.altMode && <span>Alt mode: {state.character.altMode.specificForm}</span>}
         </div>
@@ -96,7 +99,7 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
           ))}
         </article>
 
-        {!scene.isEnding && (
+        {!scene.isEnding && scene.choices.length > 0 && (
           <div className="story-choices">
             {scene.choices.map((choice) => {
               const available = isChoiceAvailable(state, choice);
@@ -112,6 +115,10 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
               );
             })}
           </div>
+        )}
+
+        {!scene.isEnding && scene.choices.length === 0 && (
+          <div className="save-message">The trio has escaped the store. Their next decision is still open.</div>
         )}
 
         {scene.isEnding && (
