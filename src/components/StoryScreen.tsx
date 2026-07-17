@@ -14,6 +14,14 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
   const [saveMessage, setSaveMessage] = useState("");
 
   const scene = STORY[state.currentSceneId];
+  const friendOneName = state.character.friends?.[0]?.name ?? "Friend One";
+  const friendTwoName = state.character.friends?.[1]?.name ?? "Friend Two";
+
+  const renderText = (text: string) =>
+    text
+      .replaceAll("{{player}}", state.character.name)
+      .replaceAll("{{friendOne}}", friendOneName)
+      .replaceAll("{{friendTwo}}", friendTwoName);
 
   const appearanceSummary = useMemo(() => {
     if (state.character.origin === "human" && state.character.humanAppearance) {
@@ -65,7 +73,7 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
         <header className="story-header">
           <div>
             <div className="chapter-label">Chapter {scene.chapter}</div>
-            <h1>{scene.title}</h1>
+            <h1>{renderText(scene.title)}</h1>
           </div>
           <button className="secondary-button compact" onClick={handleSave}>Save</button>
         </header>
@@ -73,12 +81,13 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
         <div className="character-strip">
           <strong>{state.character.name}</strong>
           <span>{appearanceSummary}</span>
+          <span>Friends: {friendOneName} and {friendTwoName}</span>
           {state.character.altMode && <span>Alt mode: {state.character.altMode.specificForm}</span>}
         </div>
 
         <article className="story-text">
-          {scene.speaker && <div className="speaker">{scene.speaker}</div>}
-          <p>{scene.body}</p>
+          {scene.speaker && <div className="speaker">{renderText(scene.speaker)}</div>}
+          <p>{renderText(scene.body)}</p>
         </article>
 
         {!scene.isEnding && (
@@ -92,7 +101,7 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
                   disabled={!available}
                   onClick={() => handleChoice(choice.id)}
                 >
-                  {choice.label}
+                  {renderText(choice.label)}
                 </button>
               );
             })}
@@ -106,6 +115,8 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
               <span>Autobot: {state.faction.autobot}</span>
               <span>Decepticon: {state.faction.decepticon}</span>
               <span>Independent: {state.faction.independent}</span>
+              <span>{friendOneName}: {state.relationships.friendOne ?? 0}</span>
+              <span>{friendTwoName}: {state.relationships.friendTwo ?? 0}</span>
             </div>
             <button className="primary-button" onClick={onRestart}>Create Another Character</button>
           </div>
