@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getLocationLabel, getOutageEffect } from "../data/humanLocation";
-import { STORY } from "../data/storyOptimus";
+import { STORY } from "../data/storyArkCommand";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
 import { saveGame } from "../services/saveService";
 import type { GameState } from "../types/game";
@@ -20,13 +20,33 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
   const elapsedHours = state.elapsedHours ?? 0;
   const currentDay = Math.floor(elapsedHours / 24) + 1;
   const hourOfDay = elapsedHours % 24;
+  const metSideswipe =
+    state.flags.followed_sideswipe === true &&
+    state.flags.first_autobot_contact === "sideswipe";
+
+  const sideswipeRecognition = metSideswipe
+    ? `Sideswipe turns from a nearby console and recognizes the trio immediately.
+
+“You.”
+
+His attention shifts to the map.
+
+“You used me to find this place, did not you?”
+
+“You were one of the routes,” ${friendOneName} admits.
+
+“I tried to lose you.”
+
+Hound answers, “They stopped following individual Autobots and started studying the pattern.”`
+    : "";
 
   const renderText = (text: string) =>
     text
       .replaceAll("{{player}}", state.character.name)
       .replaceAll("{{friendOne}}", friendOneName)
       .replaceAll("{{friendTwo}}", friendTwoName)
-      .replaceAll("{{outageEffect}}", getOutageEffect(state.character.humanLocation));
+      .replaceAll("{{outageEffect}}", getOutageEffect(state.character.humanLocation))
+      .replaceAll("{{sideswipeRecognition}}", sideswipeRecognition);
 
   const appearanceSummary = useMemo(() => {
     if (state.character.origin === "human" && state.character.humanAppearance) {
