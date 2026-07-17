@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getLocationLabel, getOutageEffect } from "../data/humanLocation";
-import { STORY } from "../data/storySideswipe";
+import { STORY } from "../data/storyArk";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
 import { saveGame } from "../services/saveService";
 import type { GameState } from "../types/game";
