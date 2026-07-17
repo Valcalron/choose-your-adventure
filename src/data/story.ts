@@ -7,16 +7,16 @@ export const STORY: Record<string, StoryScene> = {
     chapter: 1,
     title: "Aliens Exist",
     body:
-      "—ALIEN ROBOTS ATTACK DESERT POWER CENTER! The headline fills every television in the store. News footage shows jets descending over a remote electrical relay station, transforming before they touch the ground. Three towering machines tear into the power systems while a silver commander with red optics directs the attack. Minutes later, a red transport truck and several ordinary-looking cars arrive—and transform to fight them. Prizm stands rigid beside you. Juci has stopped pretending this might be a hoax. Then the reporter warns that both groups may now be traveling disguised as normal vehicles.",
+      "—ALIEN ROBOTS ATTACK DESERT POWER CENTER! The headline fills every television in the store. News footage shows jets descending over a remote electrical relay station, transforming before they touch the ground. Three towering machines tear into the power systems while a silver commander with red optics directs the attack. Minutes later, a red transport truck and several ordinary-looking cars arrive—and transform to fight them. {{friendOne}} stands rigid beside you. {{friendTwo}} has stopped pretending this might be a hoax. Then the reporter warns that both groups may now be traveling disguised as normal vehicles.",
     choices: [
       {
         id: "human_investigate",
-        label: "Tell Prizm and Juci you need to see the attack site for yourselves.",
+        label: "Tell {{friendOne}} and {{friendTwo}} you need to see the attack site for yourselves.",
         nextSceneId: "HUMAN_HELP",
         effects: [
           { type: "stat", group: "personality", key: "curiosity", amount: 1 },
           { type: "stat", group: "personality", key: "leadership", amount: 1 },
-          { type: "stat", group: "relationship", key: "prizm", amount: 1 },
+          { type: "stat", group: "relationship", key: "friendOne", amount: 1 },
           { type: "flag", key: "trio_investigates_relay_attack", value: true }
         ]
       },
@@ -26,13 +26,13 @@ export const STORY: Record<string, StoryScene> = {
         nextSceneId: "HUMAN_HIDE",
         effects: [
           { type: "stat", group: "faction", key: "independent", amount: 1 },
-          { type: "stat", group: "relationship", key: "juci", amount: 1 },
+          { type: "stat", group: "relationship", key: "friendTwo", amount: 1 },
           { type: "stat", group: "personality", key: "honesty", amount: 1 }
         ]
       },
       {
         id: "human_report",
-        label: "Call someone you trust and report what the news may have missed.",
+        label: "Ask {{friendOne}} and {{friendTwo}} to stay close while you report what the news may have missed.",
         nextSceneId: "HUMAN_CALL",
         effects: [
           { type: "stat", group: "personality", key: "obedience", amount: 1 },
@@ -48,15 +48,16 @@ export const STORY: Record<string, StoryScene> = {
     title: "A Calculated Risk",
     speaker: "Unknown Cybertronian",
     body:
-      "\"Do not touch the damaged panel.\" The voice is controlled despite the static cutting through it. \"Remove the debris from the lower hinge. Slowly.\"",
+      "\"Do not touch the damaged panel.\" The voice is controlled despite the static cutting through it. \"Remove the debris from the lower hinge. Slowly.\" Behind you, {{friendOne}} watches the road while {{friendTwo}} keeps one hand near your shoulder.",
     choices: [
       {
         id: "human_follow_instruction",
-        label: "Follow the instructions exactly.",
+        label: "Follow the instructions exactly and keep both friends informed.",
         nextSceneId: "HUMAN_END_CONTACT",
         effects: [
           { type: "stat", group: "personality", key: "obedience", amount: 1 },
           { type: "stat", group: "relationship", key: "soundwave", amount: 1 },
+          { type: "stat", group: "relationship", key: "friendTwo", amount: 1 },
           { type: "flag", key: "earned_first_decepticon_trust", value: true }
         ]
       },
@@ -77,11 +78,11 @@ export const STORY: Record<string, StoryScene> = {
     chapter: 1,
     title: "The Wrong Kind of Emergency",
     body:
-      "The dispatcher never finishes the second question. A yellow compact car rounds the bend far too quickly, brakes hard, and transforms before your eyes.",
+      "The dispatcher never finishes the second question. A yellow compact car rounds the bend far too quickly, brakes hard, and transforms before your eyes. {{friendOne}} pulls {{friendTwo}} back as the machine rises over all three of you.",
     choices: [
       {
         id: "human_stay",
-        label: "Stay and explain exactly what happened.",
+        label: "Stay together and explain exactly what happened.",
         nextSceneId: "HUMAN_END_CONTACT",
         effects: [
           { type: "stat", group: "faction", key: "autobot", amount: 1 },
@@ -91,10 +92,11 @@ export const STORY: Record<string, StoryScene> = {
       },
       {
         id: "human_leave",
-        label: "Leave before either side decides you know too much.",
+        label: "Get {{friendOne}} and {{friendTwo}} away before either side decides you know too much.",
         nextSceneId: "HUMAN_END_CONTACT",
         effects: [
-          { type: "stat", group: "faction", key: "independent", amount: 1 }
+          { type: "stat", group: "faction", key: "independent", amount: 1 },
+          { type: "stat", group: "relationship", key: "friendOne", amount: 1 }
         ]
       }
     ]
@@ -105,7 +107,7 @@ export const STORY: Record<string, StoryScene> = {
     chapter: 1,
     title: "Observer",
     body:
-      "You remain low behind the embankment. Two machines arrive from opposite directions. Neither knows you are there yet, and both are searching for the same damaged device.",
+      "The three of you remain low behind the embankment. Two machines arrive from opposite directions. Neither knows you are there yet, and both are searching for the same damaged device. {{friendOne}} looks ready to move. {{friendTwo}} is waiting to see what you decide.",
     choices: [
       {
         id: "human_warn_autobot",
@@ -127,11 +129,12 @@ export const STORY: Record<string, StoryScene> = {
       },
       {
         id: "human_warn_neither",
-        label: "Warn neither. Learn what both sides want.",
+        label: "Warn neither. Keep the trio hidden and learn what both sides want.",
         nextSceneId: "HUMAN_END_CONTACT",
         effects: [
           { type: "stat", group: "faction", key: "independent", amount: 2 },
-          { type: "stat", group: "personality", key: "ambition", amount: 1 }
+          { type: "stat", group: "personality", key: "ambition", amount: 1 },
+          { type: "stat", group: "relationship", key: "friendTwo", amount: 1 }
         ]
       }
     ]
@@ -142,7 +145,7 @@ export const STORY: Record<string, StoryScene> = {
     chapter: 1,
     title: "End of Prototype Chapter",
     body:
-      "Your first decision has placed you on the board, but it has not decided your loyalty. Both factions now know that a human witnessed something important.",
+      "Your first decision has placed all three of you on the board, but it has not decided your loyalty. Both factions now know that {{player}}, {{friendOne}}, and {{friendTwo}} witnessed something important.",
     choices: [],
     isEnding: true
   },
@@ -153,29 +156,31 @@ export const STORY: Record<string, StoryScene> = {
     chapter: 1,
     title: "First Light",
     body:
-      "Your optics activate beneath emergency lighting. The chamber around you is intact, but the city beyond it is not. Sirens pulse through the walls. Someone is arguing outside about whether newly sparked frames should be moved, armed, or abandoned.",
+      "Your optics activate beneath emergency lighting. {{friendOne}} is already awake in the neighboring berth, and {{friendTwo}} is forcing a damaged restraint open. The chamber around the three of you is intact, but the city beyond it is not. Sirens pulse through the walls. Someone outside is arguing about whether newly sparked frames should be moved, armed, or abandoned.",
     choices: [
       {
         id: "cyber_step_out",
-        label: "Step out and demand an explanation.",
+        label: "Lead {{friendOne}} and {{friendTwo}} outside and demand an explanation.",
         nextSceneId: "CYBER_ASSERT",
         effects: [
           { type: "stat", group: "personality", key: "leadership", amount: 1 },
-          { type: "stat", group: "personality", key: "ambition", amount: 1 }
+          { type: "stat", group: "personality", key: "ambition", amount: 1 },
+          { type: "stat", group: "relationship", key: "friendOne", amount: 1 }
         ]
       },
       {
         id: "cyber_listen",
-        label: "Remain still and listen before revealing you are awake.",
+        label: "Signal both friends to remain still and listen before revealing you are awake.",
         nextSceneId: "CYBER_LISTEN",
         effects: [
           { type: "stat", group: "personality", key: "curiosity", amount: 1 },
-          { type: "stat", group: "faction", key: "independent", amount: 1 }
+          { type: "stat", group: "faction", key: "independent", amount: 1 },
+          { type: "stat", group: "relationship", key: "friendTwo", amount: 1 }
         ]
       },
       {
         id: "cyber_help",
-        label: "Follow the emergency signal toward the damaged district.",
+        label: "Take your friends toward the emergency signal in the damaged district.",
         nextSceneId: "CYBER_HELP",
         effects: [
           { type: "stat", group: "personality", key: "mercy", amount: 1 },
@@ -190,7 +195,7 @@ export const STORY: Record<string, StoryScene> = {
     chapter: 1,
     title: "A Place in the Conflict",
     body:
-      "The argument stops when you enter. One worker tells you to return to your cradle. Another says no one has the authority to order you anywhere now.",
+      "The argument stops when the three of you enter. One worker tells you to return to your cradles. Another says no one has the authority to order any of you anywhere now. {{friendOne}} looks toward you; {{friendTwo}} looks toward the exits.",
     choices: [
       {
         id: "cyber_choose_order",
@@ -203,11 +208,12 @@ export const STORY: Record<string, StoryScene> = {
       },
       {
         id: "cyber_choose_self",
-        label: "Tell them you will decide your own function.",
+        label: "Tell them the three of you will decide your own functions.",
         nextSceneId: "CYBER_END_FIRST_LIGHT",
         effects: [
           { type: "stat", group: "faction", key: "independent", amount: 2 },
-          { type: "stat", group: "personality", key: "leadership", amount: 1 }
+          { type: "stat", group: "personality", key: "leadership", amount: 1 },
+          { type: "stat", group: "relationship", key: "friendOne", amount: 1 }
         ]
       }
     ]
@@ -218,11 +224,11 @@ export const STORY: Record<string, StoryScene> = {
     chapter: 1,
     title: "The First Division",
     body:
-      "You hear enough to understand that the old authority is failing and a new movement is gaining strength. Neither side agrees on whether you are a citizen, a resource, or a recruit.",
+      "The three of you hear enough to understand that the old authority is failing and a new movement is gaining strength. Neither side agrees on whether newly sparked Cybertronians are citizens, resources, or recruits.",
     choices: [
       {
         id: "cyber_reveal",
-        label: "Reveal yourself and ask to hear both arguments.",
+        label: "Reveal the trio and ask to hear both arguments.",
         nextSceneId: "CYBER_END_FIRST_LIGHT",
         effects: [
           { type: "stat", group: "personality", key: "honesty", amount: 1 },
@@ -231,7 +237,7 @@ export const STORY: Record<string, StoryScene> = {
       },
       {
         id: "cyber_follow_recruiter",
-        label: "Follow the voice speaking about changing Cybertron.",
+        label: "Lead {{friendOne}} and {{friendTwo}} after the voice speaking about changing Cybertron.",
         nextSceneId: "CYBER_END_FIRST_LIGHT",
         effects: [
           { type: "stat", group: "faction", key: "decepticon", amount: 2 },
@@ -246,11 +252,11 @@ export const STORY: Record<string, StoryScene> = {
     chapter: 1,
     title: "Function Through Action",
     body:
-      "The damaged district is full of trapped workers. No one asks what function you were assigned. They only ask whether you can help.",
+      "The damaged district is full of trapped workers. No one asks what functions the three of you were assigned. They only ask whether you can help. {{friendOne}} moves toward the nearest collapse while {{friendTwo}} waits for your direction.",
     choices: [
       {
         id: "cyber_rescue",
-        label: "Join the rescue effort.",
+        label: "Join the rescue effort together.",
         nextSceneId: "CYBER_END_FIRST_LIGHT",
         effects: [
           { type: "stat", group: "faction", key: "autobot", amount: 2 },
@@ -259,11 +265,12 @@ export const STORY: Record<string, StoryScene> = {
       },
       {
         id: "cyber_command",
-        label: "Organize the workers before entering the ruins.",
+        label: "Organize the workers and your friends before entering the ruins.",
         nextSceneId: "CYBER_END_FIRST_LIGHT",
         effects: [
           { type: "stat", group: "personality", key: "leadership", amount: 2 },
-          { type: "stat", group: "faction", key: "independent", amount: 1 }
+          { type: "stat", group: "faction", key: "independent", amount: 1 },
+          { type: "stat", group: "relationship", key: "friendTwo", amount: 1 }
         ]
       }
     ]
@@ -274,7 +281,7 @@ export const STORY: Record<string, StoryScene> = {
     chapter: 1,
     title: "End of Prototype Chapter",
     body:
-      "You came online after the war began. Your first act has already shaped how others see you, but no insignia has been placed on your frame.",
+      "You, {{friendOne}}, and {{friendTwo}} came online after the war began. Your first act has already shaped how others see your trio, but no insignia has been placed on any of your frames.",
     choices: [],
     isEnding: true
   }
