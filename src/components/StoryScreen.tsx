@@ -31,7 +31,7 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
 
 His attention shifts to the map.
 
-“You used me to find this place, did not you?”
+“You used me to find this place, didn't you?”
 
 “You were one of the routes,” ${friendOneName} admits.
 
