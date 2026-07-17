@@ -85,6 +85,7 @@ export type PlayerCharacter = {
 export type GameState = {
   currentSceneId: string;
   character: PlayerCharacter;
+  elapsedHours: number;
   faction: FactionStanding;
   personality: PersonalityStats;
   flags: Record<string, boolean | string | number>;
@@ -110,6 +111,7 @@ export type StoryChoice = {
   id: string;
   label: string;
   nextSceneId: string;
+  timeCostHours?: number;
   requirements?: Requirement[];
   effects?: Effect[];
 };
