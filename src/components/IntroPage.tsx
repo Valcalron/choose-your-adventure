@@ -1,3 +1,5 @@
+import "../intro.css";
+
 type Props = {
   onContinue: () => void;
 };
