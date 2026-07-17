@@ -49,6 +49,13 @@ export type AltMode = {
   mobilityTags: string[];
 };
 
+export type CompanionId = "friendOne" | "friendTwo";
+
+export type CompanionProfile = {
+  id: CompanionId;
+  name: string;
+};
+
 export type PlayerCharacter = {
   id?: string;
   name: string;
@@ -60,6 +67,7 @@ export type PlayerCharacter = {
     possessive: string;
   };
   startingEra: "earth_1984" | "early_war";
+  friends: [CompanionProfile, CompanionProfile];
   humanAppearance?: HumanAppearance;
   cybertronianAppearance?: CybertronianAppearance;
   altMode?: AltMode;
