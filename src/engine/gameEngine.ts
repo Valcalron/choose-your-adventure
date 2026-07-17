@@ -24,7 +24,7 @@ export const createInitialState = (character: PlayerCharacter): GameState => ({
     leadership: 0
   },
   flags: {},
-  relationships: { prizm: 5, juci: 5 },
+  relationships: { friendOne: 5, friendTwo: 5 },
   inventory: [],
   history: []
 });
