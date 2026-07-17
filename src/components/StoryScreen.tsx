@@ -17,6 +17,9 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
   const scene = STORY[state.currentSceneId];
   const friendOneName = state.character.friends?.[0]?.name ?? "Friend One";
   const friendTwoName = state.character.friends?.[1]?.name ?? "Friend Two";
+  const elapsedHours = state.elapsedHours ?? 0;
+  const currentDay = Math.floor(elapsedHours / 24) + 1;
+  const hourOfDay = elapsedHours % 24;
 
   const renderText = (text: string) =>
     text
@@ -76,7 +79,9 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
       <section className="story-shell">
         <header className="story-header">
           <div>
-            <div className="chapter-label">Chapter {scene.chapter}</div>
+            <div className="chapter-label">
+              Chapter {scene.chapter} · Day {currentDay} · Hour {hourOfDay}
+            </div>
             <h1>{renderText(scene.title)}</h1>
           </div>
           <button className="secondary-button compact" onClick={handleSave}>Save</button>
@@ -118,7 +123,7 @@ export default function StoryScreen({ initialState, onRestart }: Props) {
         )}
 
         {!scene.isEnding && scene.choices.length === 0 && (
-          <div className="save-message">The trio has escaped the store. Their next decision is still open.</div>
+          <div className="save-message">This route is ready for its next story scene.</div>
         )}
 
         {scene.isEnding && (
