@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CharacterCreation from "./components/CharacterCreation";
+import CharacterCreationWithFriends from "./components/CharacterCreationWithFriends";
 import StoryScreen from "./components/StoryScreen";
 import { createInitialState } from "./engine/gameEngine";
 import { clearLocalSave, loadLocalSave } from "./services/saveService";
@@ -18,7 +18,7 @@ export default function App() {
   };
 
   if (!gameState) {
-    return <CharacterCreation onComplete={startGame} />;
+    return <CharacterCreationWithFriends onComplete={startGame} />;
   }
 
   return <StoryScreen initialState={gameState} onRestart={restart} />;
