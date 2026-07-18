@@ -1,5 +1,14 @@
-import type { StoryScene } from "../types/game";
+import type { Effect, StoryScene } from "../types/game";
 import { STORY as BASE_STORY } from "./storySoundwaveDevice";
+
+const beginRelayInvestigationEffects: Effect[] = [
+  { type: "flag", key: "examined_relay_device", value: false },
+  { type: "flag", key: "documented_relay_device", value: false },
+  { type: "flag", key: "searched_relay_site", value: false },
+  { type: "flag", key: "contacted_soundwave_at_relay", value: false },
+  { type: "flag", key: "relay_guard_interrupted_soundwave", value: false },
+  { type: "flag", key: "reported_relay_findings", value: false }
+];
 
 const humanStart: StoryScene = {
   ...BASE_STORY.HUMAN_START,
@@ -10,10 +19,7 @@ const humanStart: StoryScene = {
         return {
           ...choice,
           nextSceneId: "HUMAN_RELAY_TRIP_PREPARATION",
-          effects: [
-            ...(choice.effects ?? []),
-            { type: "flag", key: "reported_relay_findings", value: false }
-          ]
+          effects: [...(choice.effects ?? []), { type: "flag", key: "reported_relay_findings", value: false }]
         };
       }
 
@@ -117,11 +123,65 @@ You have pockets for small items. A backpack would make it easier to carry photo
       label: "Leave without a pack and rely on your pockets.",
       nextSceneId: "HUMAN_RELAY_APPROACH",
       timeCostHours: 0,
-      effects: [
-        { type: "flag", key: "relay_trip_carry_choice", value: "pockets" }
-      ]
+      effects: [{ type: "flag", key: "relay_trip_carry_choice", value: "pockets" }]
     }
   ]
+};
+
+const routeDecepticonResearchToRelay = (
+  sceneId: string,
+  choiceId: string,
+  label: string
+): StoryScene => {
+  const scene = BASE_STORY[sceneId];
+
+  return {
+    ...scene,
+    choices: scene.choices.map((choice) =>
+      choice.id === choiceId
+        ? {
+            ...choice,
+            label,
+            nextSceneId: "HUMAN_RELAY_TRIP_PREPARATION",
+            effects: [...(choice.effects ?? []), ...beginRelayInvestigationEffects]
+          }
+        : choice
+    )
+  };
+};
+
+const researchDecepticons = routeDecepticonResearchToRelay(
+  "HUMAN_RESEARCH_DECEPTICONS",
+  "human_wait_for_decepticon_attack",
+  "Investigate the original power-relay station after the fighting has moved on."
+);
+
+const researchBothAutobotFirst = routeDecepticonResearchToRelay(
+  "HUMAN_RESEARCH_BOTH_AUTOBOT_FIRST",
+  "human_wait_for_decepticons_after_both",
+  "Investigate what the Decepticons left at the original power-relay station."
+);
+
+const researchBothDecepticonFirst = routeDecepticonResearchToRelay(
+  "HUMAN_RESEARCH_BOTH_DECEPTICON_FIRST",
+  "human_wait_for_decepticons_after_both_reverse",
+  "Investigate what the Decepticons left at the original power-relay station."
+);
+
+const homeHub: StoryScene = {
+  ...BASE_STORY.HUMAN_HOME_HUB,
+  choices: BASE_STORY.HUMAN_HOME_HUB.choices
+    .filter((choice) => choice.id !== "human_home_wait_for_event")
+    .map((choice) =>
+      choice.id === "human_home_search_decepticons"
+        ? {
+            ...choice,
+            label: "Investigate the original power-relay station and look for what the Decepticons left behind.",
+            nextSceneId: "HUMAN_RELAY_TRIP_PREPARATION",
+            effects: [...(choice.effects ?? []), ...beginRelayInvestigationEffects]
+          }
+        : choice
+    )
 };
 
 const relayReturnHome: StoryScene = {
@@ -144,8 +204,17 @@ const relayReturnHome: StoryScene = {
         { type: "stat", group: "personality", key: "honesty", amount: 1 }
       ]
     },
-    ...BASE_STORY.HUMAN_RELAY_RETURN_HOME.choices
+    ...BASE_STORY.HUMAN_RELAY_RETURN_HOME.choices.filter(
+      (choice) => choice.id !== "human_wait_for_next_decepticon_operation"
+    )
   ]
+};
+
+const relayResearchAutobots: StoryScene = {
+  ...BASE_STORY.HUMAN_RELAY_RESEARCH_AUTOBOTS,
+  choices: BASE_STORY.HUMAN_RELAY_RESEARCH_AUTOBOTS.choices.filter(
+    (choice) => choice.id !== "human_return_to_decepticon_search_after_relay"
+  )
 };
 
 const relayReportFindings: StoryScene = {
@@ -184,6 +253,25 @@ You explain that the equipment was left by the Decepticons and that the Autobots
   ]
 };
 
+const legacyDamRedirect = (id: string): StoryScene => ({
+  id,
+  origin: "human",
+  chapter: 1,
+  title: "The Original Power Station",
+  body: `There is no second dam attack to follow. The only confirmed Decepticon site available to the trio is the original power-relay station in the American Northwest.
+
+Emergency crews have restricted the roads, but the damaged station may still contain evidence or equipment left behind after the battle.`,
+  choices: [
+    {
+      id: `${id.toLowerCase()}_return_to_relay`,
+      label: "Prepare to investigate the original power-relay station.",
+      nextSceneId: "HUMAN_RELAY_TRIP_PREPARATION",
+      timeCostHours: 0,
+      effects: beginRelayInvestigationEffects
+    }
+  ]
+});
+
 const relaySearchSite: StoryScene = {
   ...BASE_STORY.HUMAN_RELAY_SEARCH_SITE,
   body: `${BASE_STORY.HUMAN_RELAY_SEARCH_SITE.body}
@@ -209,11 +297,7 @@ const soundwaveEscapeWithRelayDevice: StoryScene = {
             effects: [
               ...(choice.effects ?? []),
               { type: "flag", key: "chapter_one_complete", value: true },
-              {
-                type: "flag",
-                key: "completed_decepticon_chapter_one",
-                value: true
-              }
+              { type: "flag", key: "completed_decepticon_chapter_one", value: true }
             ]
           }
         : choice
@@ -226,9 +310,17 @@ export const STORY: Record<string, StoryScene> = {
   HUMAN_RUN: humanRun,
   HUMAN_LEAVE_STATE: humanLeaveState,
   HUMAN_FIND_ARK_MAP: findArkMap,
+  HUMAN_RESEARCH_DECEPTICONS: researchDecepticons,
+  HUMAN_RESEARCH_BOTH_AUTOBOT_FIRST: researchBothAutobotFirst,
+  HUMAN_RESEARCH_BOTH_DECEPTICON_FIRST: researchBothDecepticonFirst,
+  HUMAN_HOME_HUB: homeHub,
   HUMAN_RELAY_TRIP_PREPARATION: relayTripPreparation,
   HUMAN_RELAY_RETURN_HOME: relayReturnHome,
+  HUMAN_RELAY_RESEARCH_AUTOBOTS: relayResearchAutobots,
   HUMAN_RELAY_REPORT_FINDINGS: relayReportFindings,
+  HUMAN_SHERMAN_DAM_NEWS: legacyDamRedirect("HUMAN_SHERMAN_DAM_NEWS"),
+  HUMAN_SHERMAN_DAM_DECEPTICON_ROUTE: legacyDamRedirect("HUMAN_SHERMAN_DAM_DECEPTICON_ROUTE"),
+  HUMAN_SHERMAN_DAM_AUTOBOT_ROUTE: legacyDamRedirect("HUMAN_SHERMAN_DAM_AUTOBOT_ROUTE"),
   HUMAN_RELAY_SEARCH_SITE: relaySearchSite,
   HUMAN_SOUNDWAVE_RELAY_DEVICE_ALARM: relayDeviceAlarm,
   HUMAN_SOUNDWAVE_ESCAPE_WITH_RELAY_DEVICE: soundwaveEscapeWithRelayDevice
