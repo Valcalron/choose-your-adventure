@@ -21,14 +21,14 @@ Then live helicopter footage replaces the anchor. Smoke rises above a massive co
   choices: [
     {
       id: "human_follow_decepticon_breaking_news",
-      label: "Turn up the television and follow the breaking Decepticon report.",
+      label: "Listen to the report.",
       nextSceneId: "HUMAN_DECEPTICON_BREAKING_NEWS",
       timeCostHours: 0,
       effects: [{ type: "flag", key: "decepticon_breaking_news_seen", value: true }]
     },
     {
       id: "human_turn_off_decepticon_breaking_news",
-      label: "Turn off the television and stop pursuing either faction.",
+      label: "Turn off the television.",
       nextSceneId: "ENDING_DOOR_STAYED_CLOSED",
       timeCostHours: 0,
       effects: [{ type: "flag", key: "turned_off_decepticon_breaking_news", value: true }]
@@ -59,14 +59,14 @@ Sherman Dam is one of the largest hydroelectric and water-control projects in th
   choices: [
     {
       id: "human_continue_to_sherman_dam_report",
-      label: "Listen as the report explains what is happening at Sherman Dam.",
+      label: "Listen to the rest of the report.",
       nextSceneId: "HUMAN_SHERMAN_DAM_NEWS",
       timeCostHours: 0,
       effects: [{ type: "flag", key: "sherman_dam_identity_confirmed", value: true }]
     },
     {
       id: "human_turn_off_sherman_dam_confirmation",
-      label: "Turn off the television and stop pursuing either faction.",
+      label: "Turn off the television.",
       nextSceneId: "ENDING_DOOR_STAYED_CLOSED",
       timeCostHours: 0,
       effects: [{ type: "flag", key: "turned_off_sherman_dam_confirmation", value: true }]
