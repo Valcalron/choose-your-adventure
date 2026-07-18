@@ -1,73 +1,43 @@
 import { useState } from "react";
 import CharacterCreationWithFriends from "./components/CharacterCreationWithFriends";
-import HumanLocationStep from "./components/HumanLocationStep";
 import IntroPage from "./components/IntroPage";
 import StoryScreen from "./components/StoryScreen";
+import { AMERICAN_NORTHWEST_LOCATION } from "./data/humanLocation";
 import { createInitialState } from "./engine/gameEngine";
-import { clearLocalSave, loadLocalSave, saveLocally } from "./services/saveService";
-import type { GameState, HumanLocation, PlayerCharacter } from "./types/game";
+import { clearLocalSave, loadLocalSave } from "./services/saveService";
+import type { GameState, PlayerCharacter } from "./types/game";
+
+const withNorthwestHome = (character: PlayerCharacter): PlayerCharacter =>
+  character.origin === "human"
+    ? { ...character, humanLocation: AMERICAN_NORTHWEST_LOCATION }
+    : character;
+
+const loadNormalizedSave = (): GameState | null => {
+  const saved = loadLocalSave();
+  if (!saved) return null;
+
+  return {
+    ...saved,
+    character: withNorthwestHome(saved.character)
+  };
+};
 
 export default function App() {
   const [hasEntered, setHasEntered] = useState(false);
-  const [pendingCharacter, setPendingCharacter] = useState<PlayerCharacter | null>(null);
-  const [gameState, setGameState] = useState<GameState | null>(() => loadLocalSave());
+  const [gameState, setGameState] = useState<GameState | null>(loadNormalizedSave);
 
   const startGame = (character: PlayerCharacter) => {
-    if (character.origin === "human" && !character.humanLocation) {
-      setPendingCharacter(character);
-      return;
-    }
-
-    setGameState(createInitialState(character));
-  };
-
-  const finishHumanLocation = (location: HumanLocation) => {
-    if (!pendingCharacter) return;
-
-    const character = { ...pendingCharacter, humanLocation: location };
-    setPendingCharacter(null);
-    setGameState(createInitialState(character));
-  };
-
-  const addLocationToExistingSave = (location: HumanLocation) => {
-    if (!gameState) return;
-
-    const updatedState: GameState = {
-      ...gameState,
-      character: { ...gameState.character, humanLocation: location }
-    };
-
-    setGameState(updatedState);
-    saveLocally(updatedState);
+    setGameState(createInitialState(withNorthwestHome(character)));
   };
 
   const restart = () => {
     clearLocalSave();
-    setPendingCharacter(null);
     setGameState(null);
     setHasEntered(false);
   };
 
   if (!hasEntered) {
     return <IntroPage onContinue={() => setHasEntered(true)} />;
-  }
-
-  if (pendingCharacter) {
-    return (
-      <HumanLocationStep
-        characterName={pendingCharacter.name}
-        onComplete={finishHumanLocation}
-      />
-    );
-  }
-
-  if (gameState?.character.origin === "human" && !gameState.character.humanLocation) {
-    return (
-      <HumanLocationStep
-        characterName={gameState.character.name}
-        onComplete={addLocationToExistingSave}
-      />
-    );
   }
 
   if (!gameState) {
