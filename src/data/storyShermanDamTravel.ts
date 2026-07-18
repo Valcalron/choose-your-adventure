@@ -45,23 +45,41 @@ Sherman Dam is still hours away.
 “If Soundwave is there, he may already know more than the news does.”`,
   choices: [
     {
-      id: "human_try_soundwave_during_sherman_drive",
-      label: "Try the communicator while the trio is still on the road.",
-      nextSceneId: "HUMAN_SHERMAN_DAM_CONTACT_ATTEMPT",
-      timeCostHours: 4,
-      requirements: [{ type: "inventory", item: "Recovered Decepticon relay device" }],
-      effects: [
-        { type: "flag", key: "attempted_soundwave_contact_on_sherman_route", value: true },
-        { type: "flag", key: "soundwave_received_sherman_contact_attempt", value: true },
-        { type: "flag", key: "soundwave_busy_during_sherman_contact_attempt", value: true }
-      ]
-    },
-    {
-      id: "human_continue_to_sherman_without_communicator",
+      id: "human_begin_long_drive_to_sherman",
       label: "Continue the long drive toward Sherman Dam.",
+      nextSceneId: "HUMAN_SHERMAN_DAM_TRAVEL_WITHOUT_DEVICE",
+      timeCostHours: 4,
+      conditionalRedirects: [
+        {
+          requirements: [{ type: "inventory", item: "Recovered Decepticon relay device" }],
+          nextSceneId: "HUMAN_SHERMAN_DAM_CONTACT_ATTEMPT",
+          effects: [
+            { type: "flag", key: "attempted_soundwave_contact_on_sherman_route", value: true },
+            { type: "flag", key: "soundwave_received_sherman_contact_attempt", value: true },
+            { type: "flag", key: "soundwave_busy_during_sherman_contact_attempt", value: true }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+const shermanDamTravelWithoutDevice: StoryScene = {
+  id: "HUMAN_SHERMAN_DAM_TRAVEL_WITHOUT_DEVICE",
+  origin: "human",
+  chapter: 2,
+  title: "The Long Drive",
+  body: `The trio has no working Decepticon communicator to try.
+
+The radio becomes your only connection to the attack. Reports change as the drive continues: new road closures, expanding power failures, military aircraft, and warnings for civilians to remain away from the river corridor.
+
+There is nothing to do except keep moving and hope the routes ahead remain open long enough to reach the outer emergency perimeter.`,
+  choices: [
+    {
+      id: "human_finish_drive_to_sherman_without_device",
+      label: "Continue toward the outer closures.",
       nextSceneId: "HUMAN_SHERMAN_DAM_DECEPTICON_ROUTE",
-      timeCostHours: 12,
-      requirements: [{ type: "flag_not", key: "removed_relay_device", equals: true }]
+      timeCostHours: 8
     }
   ]
 };
@@ -126,6 +144,7 @@ export const STORY: Record<string, StoryScene> = {
   ...BASE_STORY,
   HUMAN_SHERMAN_DAM_NEWS: shermanDamNews,
   HUMAN_SHERMAN_DAM_TRAVEL_START: shermanDamTravelStart,
+  HUMAN_SHERMAN_DAM_TRAVEL_WITHOUT_DEVICE: shermanDamTravelWithoutDevice,
   HUMAN_SHERMAN_DAM_CONTACT_ATTEMPT: shermanDamContactAttempt,
   HUMAN_SHERMAN_DAM_DECEPTICON_ROUTE: shermanDamDecepticonRoute,
   HUMAN_SHERMAN_DAM_AUTOBOT_ROUTE: shermanDamAutobotRoute
