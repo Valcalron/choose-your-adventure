@@ -98,6 +98,7 @@ export type Requirement =
   | { type: "origin"; value: Origin }
   | { type: "sex"; value: CharacterSex }
   | { type: "flag"; key: string; equals: boolean | string | number }
+  | { type: "flag_not"; key: string; equals: boolean | string | number }
   | { type: "stat"; group: "faction" | "personality" | "relationship"; key: string; min: number }
   | { type: "inventory"; item: string };
 
@@ -113,6 +114,12 @@ export type ChanceRedirect = {
   effects?: Effect[];
 };
 
+export type ConditionalRedirect = {
+  requirements: Requirement[];
+  nextSceneId: string;
+  effects?: Effect[];
+};
+
 export type StoryChoice = {
   id: string;
   label: string;
@@ -121,6 +128,7 @@ export type StoryChoice = {
   requirements?: Requirement[];
   effects?: Effect[];
   chanceRedirect?: ChanceRedirect;
+  conditionalRedirects?: ConditionalRedirect[];
 };
 
 export type StoryScene = {
