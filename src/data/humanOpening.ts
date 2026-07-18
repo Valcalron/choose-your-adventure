@@ -58,7 +58,7 @@ A new line appears beneath the headline:
 
 CONTACT LOST WITH NEWS TEAM
 
-“We are being told the animal-like machine may have deliberately disabled the camera. Authorities have not confirmed that it attacked anyone. Intercepted communications suggest it may be called Ravage.”
+“We are being told the animal-like machine may have deliberately disabled the camera. Authorities have not confirmed that it attacked anyone. One worker who escaped the station says the blue machine called it Ravage.”
 
 The station switches back to helicopter footage. Additional aircraft and vehicles are arriving at the relay center now. More towering machines transform and advance toward the exposed power systems. A larger silver robot carrying an enormous cannon on his arm appears among them, and the first attackers immediately turn toward him.
 
