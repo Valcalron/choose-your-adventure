@@ -147,17 +147,21 @@ const relayCaughtCooperate: StoryScene = {
 
 The worker is angry, but the damaged station concerns him more than punishing three civilians.
 
-He orders all of you away from the unfamiliar machinery and calls for another worker to escort the trio back toward the public side of the closure.
+He orders all of you away from the unfamiliar machinery and calls for another worker to escort the trio through the damaged yard.
 
 Anything physically removed from the station stays behind. Photographs, sketches, and memories are harder to take away.
+
+The workers walk all three of you past the maintenance gate, through the temporary checkpoint, and beyond the final barricade.
+
+They leave the trio on the shoulder of the highway outside the closed perimeter.
 
 The investigation ends earlier than planned, but it does not end empty-handed.`,
   choices: [
     {
-      id: "human_return_home_after_relay_worker_cooperation",
-      label: "Return home and review what the trio learned.",
-      nextSceneId: "HUMAN_RELAY_RETURN_HOME",
-      timeCostHours: 2
+      id: "human_reach_highway_after_relay_worker_cooperation",
+      label: "Regroup on the highway outside the perimeter.",
+      nextSceneId: "HUMAN_RELAY_OUTSIDE_PERIMETER",
+      timeCostHours: 1
     }
   ]
 };
@@ -179,13 +183,17 @@ The story lasts less than a minute. The worker does not know who you are, but he
 
 He keeps the trio away from the alien equipment and walks all three of you back toward the closure while reporting the intrusion over his radio.
 
-You leave without convincing him. You still leave with anything he did not see or recognize as part of the station.`,
+Another worker meets him at the checkpoint. Together they take you through the gate and past the final barricade.
+
+The bluff does not get you released inside the site. It gets you deposited on the shoulder of the highway outside the perimeter.
+
+You still leave with anything the workers did not see or recognize as part of the station.`,
   choices: [
     {
-      id: "human_return_home_after_relay_worker_bluff",
-      label: "Get away from the roadblocks and return home.",
-      nextSceneId: "HUMAN_RELAY_RETURN_HOME",
-      timeCostHours: 2
+      id: "human_reach_highway_after_relay_worker_bluff",
+      label: "Regroup on the highway outside the perimeter.",
+      nextSceneId: "HUMAN_RELAY_OUTSIDE_PERIMETER",
+      timeCostHours: 1
     }
   ]
 };
@@ -203,13 +211,46 @@ The worker shouts after you. Another voice answers through his radio.
 
 No one follows into the channel quickly enough.
 
-The trio reaches the abandoned vehicle and leaves before the roadblocks receive a useful description. Whether you escaped with evidence or with alien equipment depends on what you had already taken when the worker appeared.`,
+The drainage channel carries the trio beneath the temporary fencing and out beyond the perimeter. You climb back to the surface beside the highway, several hundred yards beyond the roadblock.
+
+You have escaped the worker, but you are still standing outside the closed site with the barricades visible behind you. Whether you escaped with evidence or with alien equipment depends on what you had already taken when the worker appeared.`,
   choices: [
     {
-      id: "human_return_home_after_running_from_relay_worker",
-      label: "Return home before the search around the relay site expands.",
+      id: "human_reach_highway_after_running_from_relay_worker",
+      label: "Regroup on the highway outside the perimeter.",
+      nextSceneId: "HUMAN_RELAY_OUTSIDE_PERIMETER",
+      timeCostHours: 1
+    }
+  ]
+};
+
+const relayOutsidePerimeter: StoryScene = {
+  id: "HUMAN_RELAY_OUTSIDE_PERIMETER",
+  origin: "human",
+  chapter: 1,
+  title: "Outside the Perimeter",
+  body: `The three of you stand on the highway shoulder beyond the final barricade.
+
+The damaged relay station is hidden behind emergency vehicles, temporary fencing, and the rise of the land. Workers move through the checkpoint, but no one allows the trio back through.
+
+Traffic passes slowly in the open lane. Your vehicle is still where you left it farther down the highway.
+
+{{friendOne}} looks back toward the roadblock.
+
+“We are not getting another chance to walk in there.”
+
+{{friendTwo}} checks what evidence remains with the trio.
+
+“Then we leave before somebody decides to ask more questions.”
+
+The relay site is behind the perimeter now. Whatever happens next must begin from outside it.`,
+  choices: [
+    {
+      id: "human_leave_highway_after_relay_catch",
+      label: "Return to the vehicle and take the evidence home.",
       nextSceneId: "HUMAN_RELAY_RETURN_HOME",
-      timeCostHours: 2
+      timeCostHours: 2,
+      effects: [{ type: "flag", key: "returned_to_highway_after_relay_catch", value: true }]
     }
   ]
 };
@@ -300,6 +341,7 @@ export const STORY: Record<string, StoryScene> = {
   HUMAN_RELAY_CAUGHT_COOPERATE: relayCaughtCooperate,
   HUMAN_RELAY_CAUGHT_BLUFF: relayCaughtBluff,
   HUMAN_RELAY_CAUGHT_RUN: relayCaughtRun,
+  HUMAN_RELAY_OUTSIDE_PERIMETER: relayOutsidePerimeter,
   HUMAN_RELAY_SOUNDWAVE_GUARD_INTERRUPT: relaySoundwaveGuardInterrupt,
   HUMAN_SOUNDWAVE_CONTACT_END: soundwaveContactEnd
 };
