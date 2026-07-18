@@ -104,6 +104,7 @@ export type Requirement =
 
 export type Effect =
   | { type: "flag"; key: string; value: boolean | string | number }
+  | { type: "flag_increment"; key: string; amount: number }
   | { type: "stat"; group: "faction" | "personality" | "relationship"; key: string; amount: number }
   | { type: "inventory_add"; item: string }
   | { type: "inventory_remove"; item: string };
