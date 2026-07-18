@@ -6,6 +6,36 @@ const relayDeviceHub: StoryScene = {
   title: "Among the Damage"
 };
 
+const addDirectEntryChoice = (
+  scene: StoryScene,
+  choiceId: string
+): StoryScene => ({
+  ...scene,
+  choices: [
+    {
+      id: choiceId,
+      label: "Find a way into the secured area.",
+      nextSceneId: "HUMAN_SHERMAN_DAM_SEARCH_FOR_ENTRY",
+      timeCostHours: 2,
+      effects: [
+        { type: "flag", key: "actively_searching_for_sherman_entry", value: true },
+        { type: "stat", group: "personality", key: "ambition", amount: 1 }
+      ]
+    },
+    ...scene.choices
+  ]
+});
+
+const shermanDamDecepticonRoute = addDirectEntryChoice(
+  BASE_STORY.HUMAN_SHERMAN_DAM_DECEPTICON_ROUTE,
+  "human_find_way_in_from_decepticon_perimeter"
+);
+
+const shermanDamAutobotRoute = addDirectEntryChoice(
+  BASE_STORY.HUMAN_SHERMAN_DAM_AUTOBOT_ROUTE,
+  "human_find_way_in_from_autobot_perimeter"
+);
+
 const shermanDamAccessMap: StoryScene = {
   ...BASE_STORY.HUMAN_SHERMAN_DAM_ACCESS_MAP,
   choices: [
@@ -105,6 +135,8 @@ For now, the three of you watch for movement away from the main operation and av
 export const STORY: Record<string, StoryScene> = {
   ...BASE_STORY,
   HUMAN_RELAY_DEVICE_HUB: relayDeviceHub,
+  HUMAN_SHERMAN_DAM_DECEPTICON_ROUTE: shermanDamDecepticonRoute,
+  HUMAN_SHERMAN_DAM_AUTOBOT_ROUTE: shermanDamAutobotRoute,
   HUMAN_SHERMAN_DAM_ACCESS_MAP: shermanDamAccessMap,
   HUMAN_SHERMAN_DAM_SEARCH_FOR_ENTRY: shermanDamSearchForEntry,
   HUMAN_SHERMAN_DAM_PERIMETER_WATCH: shermanDamPerimeterWatch
