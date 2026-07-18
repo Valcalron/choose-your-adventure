@@ -1,10 +1,16 @@
 import "../intro.css";
 
 type Props = {
-  onContinue: () => void;
+  hasSavedGame: boolean;
+  onContinueSavedGame: () => void;
+  onStartNewGame: () => void;
 };
 
-export default function IntroPage({ onContinue }: Props) {
+export default function IntroPage({
+  hasSavedGame,
+  onContinueSavedGame,
+  onStartNewGame
+}: Props) {
   return (
     <main className="screen intro-screen">
       <section className="panel intro-panel">
@@ -46,8 +52,21 @@ export default function IntroPage({ onContinue }: Props) {
         </div>
 
         <div className="button-row">
-          <button type="button" className="primary-button" onClick={onContinue}>
-            Choose Your Origin
+          {hasSavedGame && (
+            <button
+              type="button"
+              className="primary-button"
+              onClick={onContinueSavedGame}
+            >
+              Continue Saved Game
+            </button>
+          )}
+          <button
+            type="button"
+            className={hasSavedGame ? "secondary-button" : "primary-button"}
+            onClick={onStartNewGame}
+          >
+            Start New Game
           </button>
         </div>
       </section>
