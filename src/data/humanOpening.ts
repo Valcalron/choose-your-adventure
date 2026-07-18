@@ -1,8 +1,8 @@
-export const HUMAN_OPENING = `ALIEN ROBOTS ATTACK DESERT POWER CENTER
+export const HUMAN_OPENING = `ALIEN ROBOTS ATTACK NORTHWEST POWER CENTER
 
 The headline fills every television in the store.
 
-“We interrupt our regular programming for a developing emergency at a desert power relay facility.”
+“We interrupt our regular programming for a developing emergency at an inland desert power-relay facility in the American Northwest.”
 
 The picture changes to distant helicopter footage. At first, the station appears normal: transmission towers, power lines, and maintenance buildings surrounded by miles of open desert.
 
