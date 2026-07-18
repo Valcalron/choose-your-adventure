@@ -156,6 +156,9 @@ Hound answers, “They stopped following individual Autobots and started studyin
     );
   }
 
+  const availableChoices = scene.choices.filter((choice) =>
+    isChoiceAvailable(state, choice)
+  );
   const displayedChapter =
     state.flags.chapter_one_complete === true
       ? Math.max(2, scene.chapter)
@@ -192,25 +195,21 @@ Hound answers, “They stopped following individual Autobots and started studyin
           ))}
         </article>
 
-        {!scene.isEnding && scene.choices.length > 0 && (
+        {!scene.isEnding && availableChoices.length > 0 && (
           <div className="story-choices">
-            {scene.choices.map((choice) => {
-              const available = isChoiceAvailable(state, choice);
-              return (
-                <button
-                  key={choice.id}
-                  className="story-choice"
-                  disabled={!available}
-                  onClick={() => handleChoice(choice.id)}
-                >
-                  {renderText(choice.label)}
-                </button>
-              );
-            })}
+            {availableChoices.map((choice) => (
+              <button
+                key={choice.id}
+                className="story-choice"
+                onClick={() => handleChoice(choice.id)}
+              >
+                {renderText(choice.label)}
+              </button>
+            ))}
           </div>
         )}
 
-        {!scene.isEnding && scene.choices.length === 0 && (
+        {!scene.isEnding && availableChoices.length === 0 && (
           <div className="save-message">This route is ready for its next story scene.</div>
         )}
 
