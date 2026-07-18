@@ -43,6 +43,9 @@ Hound answers, “They stopped following individual Autobots and started studyin
   const examinedRelayDevice = state.flags.examined_relay_device === true;
   const documentedRelayDevice = state.flags.documented_relay_device === true;
   const searchedRelaySite = state.flags.searched_relay_site === true;
+  const hasRecoveredRelayDevice = state.inventory.includes(
+    "Recovered Decepticon relay device"
+  );
   const completedRelayInvestigations = [
     examinedRelayDevice ? "examined the device" : null,
     documentedRelayDevice ? "documented its construction and connections" : null,
@@ -75,9 +78,9 @@ Hound answers, “They stopped following individual Autobots and started studyin
 
   const relayReturnSummary = state.flags.contacted_soundwave_at_relay === true
     ? "Soundwave answered the instant the communicator activated. Whether you gave him names or fled without answering, he now knows that three humans entered the site and deliberately touched Decepticon technology."
-    : state.flags.removed_relay_device === true
+    : hasRecoveredRelayDevice
       ? "The recovered Decepticon device came with you. Its warning tone eventually stopped, but none of you knows whether it transmitted an alert before going quiet."
-      : "The Decepticon device remained attached to the station. Whatever you photographed, sketched, observed, or recovered came home with you.";
+      : "The Decepticon device remained at the station. Whatever you photographed, sketched, observed, or recovered separately came home with you.";
 
   const relayEvidenceReviewParts = [
     documentedRelayDevice
@@ -86,7 +89,7 @@ Hound answers, “They stopped following individual Autobots and started studyin
     searchedRelaySite
       ? "The discarded Cybertronian component and the track pattern show that one Decepticon remained near the power equipment during the attack."
       : null,
-    state.flags.removed_relay_device === true
+    hasRecoveredRelayDevice
       ? "The recovered relay device is physical proof, but handling or activating it again may reveal where you took it."
       : null,
     state.flags.contacted_soundwave_at_relay === true
