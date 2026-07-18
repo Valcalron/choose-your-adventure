@@ -199,6 +199,27 @@ const relayDeviceAlarm: StoryScene = {
   )
 };
 
+const soundwaveEscapeWithRelayDevice: StoryScene = {
+  ...BASE_STORY.HUMAN_SOUNDWAVE_ESCAPE_WITH_RELAY_DEVICE,
+  choices: BASE_STORY.HUMAN_SOUNDWAVE_ESCAPE_WITH_RELAY_DEVICE.choices.map(
+    (choice) =>
+      choice.id === "human_reach_highway_with_soundwave_device"
+        ? {
+            ...choice,
+            effects: [
+              ...(choice.effects ?? []),
+              { type: "flag", key: "chapter_one_complete", value: true },
+              {
+                type: "flag",
+                key: "completed_decepticon_chapter_one",
+                value: true
+              }
+            ]
+          }
+        : choice
+  )
+};
+
 export const STORY: Record<string, StoryScene> = {
   ...BASE_STORY,
   HUMAN_START: humanStart,
@@ -209,5 +230,6 @@ export const STORY: Record<string, StoryScene> = {
   HUMAN_RELAY_RETURN_HOME: relayReturnHome,
   HUMAN_RELAY_REPORT_FINDINGS: relayReportFindings,
   HUMAN_RELAY_SEARCH_SITE: relaySearchSite,
-  HUMAN_SOUNDWAVE_RELAY_DEVICE_ALARM: relayDeviceAlarm
+  HUMAN_SOUNDWAVE_RELAY_DEVICE_ALARM: relayDeviceAlarm,
+  HUMAN_SOUNDWAVE_ESCAPE_WITH_RELAY_DEVICE: soundwaveEscapeWithRelayDevice
 };
