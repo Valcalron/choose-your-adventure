@@ -20,7 +20,7 @@ Soundwave does not speak. The communicator continues its slow pulse as though wa
       id: "human_keep_rotating_communicator_watch",
       label: "Set a rotating watch schedule and continue with ordinary life.",
       nextSceneId: "HUMAN_DECEPTICON_QUIET_WEEK",
-      timeCostHours: 72,
+      timeCostHours: 168,
       effects: [
         { type: "flag", key: "communicator_watch_plan", value: "rotating_watch" },
         { type: "stat", group: "relationship", key: "friendOne", amount: 1 },
@@ -31,14 +31,14 @@ Soundwave does not speak. The communicator continues its slow pulse as though wa
       id: "human_check_communicator_twice_daily",
       label: "Keep it out of sight and check it only every morning and evening.",
       nextSceneId: "HUMAN_DECEPTICON_QUIET_WEEK",
-      timeCostHours: 72,
+      timeCostHours: 168,
       effects: [{ type: "flag", key: "communicator_watch_plan", value: "twice_daily" }]
     },
     {
       id: "human_research_energy_sites_while_waiting",
       label: "Use spare time to organize reports about power stations, fuel depots, and unexplained outages.",
       nextSceneId: "HUMAN_DECEPTICON_QUIET_WEEK",
-      timeCostHours: 72,
+      timeCostHours: 168,
       effects: [
         { type: "flag", key: "researched_energy_targets_while_waiting", value: true },
         { type: "stat", group: "personality", key: "curiosity", amount: 1 }
@@ -70,14 +70,14 @@ The silence gives the trio time to become more organized, but it provides no ans
       id: "human_continue_life_and_monitor_news",
       label: "Continue your normal routines while monitoring television, radio, and newspapers together.",
       nextSceneId: "HUMAN_DECEPTICON_SECOND_WEEK",
-      timeCostHours: 96,
+      timeCostHours: 120,
       effects: [{ type: "flag", key: "maintained_normal_routines", value: true }]
     },
     {
       id: "human_build_energy_target_map_during_week",
       label: "Spend the evenings building a map of major energy sites and suspicious outages.",
       nextSceneId: "HUMAN_DECEPTICON_SECOND_WEEK",
-      timeCostHours: 96,
+      timeCostHours: 120,
       effects: [
         { type: "flag", key: "built_decepticon_energy_target_map", value: true },
         { type: "stat", group: "faction", key: "decepticon", amount: 1 }
@@ -87,7 +87,7 @@ The silence gives the trio time to become more organized, but it provides no ans
       id: "human_study_first_soundwave_conversation",
       label: "Review every word Soundwave said and prepare better questions for another conversation.",
       nextSceneId: "HUMAN_DECEPTICON_SECOND_WEEK",
-      timeCostHours: 96,
+      timeCostHours: 120,
       effects: [
         { type: "flag", key: "prepared_second_soundwave_questions", value: true },
         { type: "stat", group: "personality", key: "curiosity", amount: 1 }
@@ -119,7 +119,7 @@ SHERMAN DAM — ALIEN ACTIVITY REPORTED`,
       id: "human_turn_up_sherman_dam_report",
       label: "Turn up the television and listen to the Sherman Dam report.",
       nextSceneId: "HUMAN_SHERMAN_DAM_NEWS",
-      timeCostHours: 120,
+      timeCostHours: 0,
       effects: [{ type: "flag", key: "sherman_dam_news_breaks_after_wait", value: true }]
     }
   ]
