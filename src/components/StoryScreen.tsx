@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import InventoryPanel from "./InventoryPanel";
 import { getLocationLabel, getOutageEffect } from "../data/humanLocation";
-import { STORY } from "../data/storyPack";
+import { STORY } from "../data/storyRelayApproach";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
 import { saveGame } from "../services/saveService";
 import type { GameState } from "../types/game";
@@ -118,6 +118,10 @@ Hound answers, “They stopped following individual Autobots and started studyin
     state.flags.relay_guard_interrupted_soundwave === true ||
     state.flags.relay_worker_witnessed_soundwave === true;
   const soundwaveFutureContact = state.flags.soundwave_future_contact;
+  const soundwaveUsefulEvidence =
+    state.flags.soundwave_information_shared === "full" ||
+    typeof state.flags.soundwave_utility_offer === "string" ||
+    state.flags.soundwave_material_status === "offered_return";
   const soundwaveRelationship = state.relationships.soundwave ?? 0;
   const soundwaveDeviceEligible =
     !soundwaveContactCompromised &&
@@ -193,7 +197,6 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
 
     const next = choose(state, selected);
     setState(next);
-    setInventoryOpen(false);
     setSaveMessage("");
   };
 
