@@ -41,6 +41,8 @@ export const meetsRequirement = (
       return state.character.sex === requirement.value;
     case "flag":
       return state.flags[requirement.key] === requirement.equals;
+    case "flag_not":
+      return state.flags[requirement.key] !== requirement.equals;
     case "inventory":
       return state.inventory.includes(requirement.item);
     case "stat": {
@@ -130,18 +132,31 @@ export const choose = (state: GameState, choice: StoryChoice): GameState => {
   }
 
   const withChoiceEffects = (choice.effects ?? []).reduce(applyEffect, state);
+  const conditionalRedirect = choice.conditionalRedirects?.find((redirect) =>
+    redirect.requirements.every((requirement) =>
+      meetsRequirement(withChoiceEffects, requirement)
+    )
+  );
+  const withConditionalEffects = conditionalRedirect
+    ? (conditionalRedirect.effects ?? []).reduce(applyEffect, withChoiceEffects)
+    : withChoiceEffects;
   const probability = choice.chanceRedirect?.probability ?? 0;
-  const redirected =
+  const chanceRedirected =
     choice.chanceRedirect !== undefined &&
     probability > 0 &&
     Math.random() < Math.min(1, probability);
-  const withChanceEffects = redirected
-    ? (choice.chanceRedirect?.effects ?? []).reduce(applyEffect, withChoiceEffects)
-    : withChoiceEffects;
-  const nextSceneId = redirected
+  const withChanceEffects = chanceRedirected
+    ? (choice.chanceRedirect?.effects ?? []).reduce(applyEffect, withConditionalEffects)
+    : withConditionalEffects;
+  const nextSceneId = chanceRedirected
     ? choice.chanceRedirect!.nextSceneId
-    : choice.nextSceneId;
+    : conditionalRedirect?.nextSceneId ?? choice.nextSceneId;
   const hoursPassed = choice.timeCostHours ?? 1;
+  const redirectMarker = chanceRedirected
+    ? ":chance"
+    : conditionalRedirect
+      ? ":conditional"
+      : "";
 
   return {
     ...withChanceEffects,
@@ -149,7 +164,7 @@ export const choose = (state: GameState, choice: StoryChoice): GameState => {
     elapsedHours: (withChanceEffects.elapsedHours ?? 0) + hoursPassed,
     history: [
       ...withChanceEffects.history,
-      `${state.currentSceneId}:${choice.id}${redirected ? ":chance" : ""}`
+      `${state.currentSceneId}:${choice.id}${redirectMarker}`
     ]
   };
 };
