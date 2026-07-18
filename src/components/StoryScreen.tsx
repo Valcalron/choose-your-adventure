@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getLocationLabel, getOutageEffect } from "../data/humanLocation";
-import { STORY } from "../data/storyChapters";
+import { STORY } from "../data/storyInvestigation";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
 import { saveGame } from "../services/saveService";
 import type { GameState } from "../types/game";
@@ -40,13 +40,74 @@ His attention shifts to the map.
 Hound answers, “They stopped following individual Autobots and started studying the pattern.”`
     : "";
 
+  const examinedRelayDevice = state.flags.examined_relay_device === true;
+  const documentedRelayDevice = state.flags.documented_relay_device === true;
+  const searchedRelaySite = state.flags.searched_relay_site === true;
+  const completedRelayInvestigations = [
+    examinedRelayDevice ? "examined the device" : null,
+    documentedRelayDevice ? "documented its construction and connections" : null,
+    searchedRelaySite ? "searched the rest of the attack site" : null
+  ].filter((item): item is string => item !== null);
+
+  const relayContactPreparation =
+    completedRelayInvestigations.length === 3
+      ? "You have already examined the device, documented its connections, and searched the surrounding site. This is not an accidental touch. You return to the pulsing section because you believe it is a communicator."
+      : completedRelayInvestigations.length > 0
+        ? `Before touching the pulsing section, the trio has already ${completedRelayInvestigations.join(" and ")}. You know enough to believe this action may deliberately contact whoever left it behind.`
+        : "You have not finished studying the device, but the separate purple pulse looks too deliberate to ignore. You decide to test whether it can reach whoever left it behind.";
+
+  const soundwaveEvidenceNoticeParts: string[] = [];
+  if (examinedRelayDevice) {
+    soundwaveEvidenceNoticeParts.push("“Manual inspection detected.”");
+  }
+  if (documentedRelayDevice) {
+    soundwaveEvidenceNoticeParts.push("“Visual recording detected.”");
+  }
+  if (searchedRelaySite) {
+    soundwaveEvidenceNoticeParts.push("“Site-survey behavior detected. State what you observed.”");
+  }
+  if (completedRelayInvestigations.length === 3) {
+    soundwaveEvidenceNoticeParts.push(
+      "The unit has already told him that the humans did not stumble onto one control. They examined, documented, searched, returned, and then attempted contact."
+    );
+  }
+  const soundwaveEvidenceNotice = soundwaveEvidenceNoticeParts.join("\n\n");
+
+  const relayReturnSummary = state.flags.contacted_soundwave_at_relay === true
+    ? "Soundwave answered the instant the communicator activated. Whether you gave him names or fled without answering, he now knows that three humans entered the site and deliberately touched Decepticon technology."
+    : state.flags.removed_relay_device === true
+      ? "The recovered Decepticon device came with you. Its warning tone eventually stopped, but none of you knows whether it transmitted an alert before going quiet."
+      : "The Decepticon device remained attached to the station. Whatever you photographed, sketched, observed, or recovered came home with you.";
+
+  const relayEvidenceReviewParts = [
+    documentedRelayDevice
+      ? "Your photographs and sketches preserve the device's shape, markings, and connection points."
+      : null,
+    searchedRelaySite
+      ? "The discarded Cybertronian component and the track pattern show that one Decepticon remained near the power equipment during the attack."
+      : null,
+    state.flags.removed_relay_device === true
+      ? "The recovered relay device is physical proof, but handling or activating it again may reveal where you took it."
+      : null,
+    state.flags.contacted_soundwave_at_relay === true
+      ? "The communication itself confirmed that Soundwave could receive an alert from the unit immediately."
+      : null
+  ].filter((item): item is string => item !== null);
+  const relayEvidenceReview = relayEvidenceReviewParts.length > 0
+    ? relayEvidenceReviewParts.join("\n\n")
+    : "You left with observations rather than physical proof, but the pattern of damage still confirms that the Decepticons used the station as an energy source.";
+
   const renderText = (text: string) =>
     text
       .replaceAll("{{player}}", state.character.name)
       .replaceAll("{{friendOne}}", friendOneName)
       .replaceAll("{{friendTwo}}", friendTwoName)
       .replaceAll("{{outageEffect}}", getOutageEffect(state.character.humanLocation))
-      .replaceAll("{{sideswipeRecognition}}", sideswipeRecognition);
+      .replaceAll("{{sideswipeRecognition}}", sideswipeRecognition)
+      .replaceAll("{{relayContactPreparation}}", relayContactPreparation)
+      .replaceAll("{{soundwaveEvidenceNotice}}", soundwaveEvidenceNotice)
+      .replaceAll("{{relayReturnSummary}}", relayReturnSummary)
+      .replaceAll("{{relayEvidenceReview}}", relayEvidenceReview);
 
   const appearanceSummary = useMemo(() => {
     if (state.character.origin === "human" && state.character.humanAppearance) {
