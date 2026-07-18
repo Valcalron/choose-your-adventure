@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getLocationLabel, getOutageEffect } from "../data/humanLocation";
-import { STORY } from "../data/storySoundwaveDevice";
+import { STORY } from "../data/storyPack";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
 import { saveGame } from "../services/saveService";
 import type { GameState } from "../types/game";
@@ -43,9 +43,16 @@ Hound answers, “They stopped following individual Autobots and started studyin
   const examinedRelayDevice = state.flags.examined_relay_device === true;
   const documentedRelayDevice = state.flags.documented_relay_device === true;
   const searchedRelaySite = state.flags.searched_relay_site === true;
+  const hasBackpack = state.inventory.includes("Backpack");
   const hasRecoveredRelayDevice = state.inventory.includes(
     "Recovered Decepticon relay device"
   );
+  const relayComponentCarry = hasBackpack
+    ? "You wrap the small component and place it in the backpack, where it will not fall out while the trio moves through the site."
+    : "With no pack, you wrap the small component as best you can and slide it into the deepest pocket you have.";
+  const relayDeviceCarry = hasBackpack
+    ? "The casing contracts enough to fit inside the backpack. You force it through the opening and pull the straps tight."
+    : "The contracted unit is far too large for a pocket. You grip it in both hands while your friends clear the route ahead.";
   const completedRelayInvestigations = [
     examinedRelayDevice ? "examined the device" : null,
     documentedRelayDevice ? "documented its construction and connections" : null,
@@ -164,7 +171,9 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
       .replaceAll("{{soundwaveEvidenceNotice}}", soundwaveEvidenceNotice)
       .replaceAll("{{relayReturnSummary}}", relayReturnSummary)
       .replaceAll("{{relayEvidenceReview}}", relayEvidenceReview)
-      .replaceAll("{{soundwaveFinalAssessment}}", soundwaveFinalAssessment);
+      .replaceAll("{{soundwaveFinalAssessment}}", soundwaveFinalAssessment)
+      .replaceAll("{{relayComponentCarry}}", relayComponentCarry)
+      .replaceAll("{{relayDeviceCarry}}", relayDeviceCarry);
 
   const appearanceSummary = useMemo(() => {
     if (state.character.origin === "human" && state.character.humanAppearance) {
