@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getLocationLabel, getOutageEffect } from "../data/humanLocation";
-import { STORY } from "../data/storySoundwaveQuestions";
+import { STORY } from "../data/storySoundwaveAssessment";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
 import { saveGame } from "../services/saveService";
 import type { GameState } from "../types/game";
@@ -100,6 +100,52 @@ Hound answers, “They stopped following individual Autobots and started studyin
     ? relayEvidenceReviewParts.join("\n\n")
     : "You left with observations rather than physical proof, but the pattern of damage still confirms that the Decepticons used the station as an energy source.";
 
+  const soundwaveDeceptionDetected =
+    state.flags.lied_to_soundwave_at_first_contact === true ||
+    state.flags.lied_to_soundwave_about_relay_site === true ||
+    state.flags.lied_to_soundwave_about_affiliation === true ||
+    state.flags.lied_to_soundwave_about_material === true;
+  const soundwaveContactCompromised =
+    state.flags.relay_guard_interrupted_soundwave === true ||
+    state.flags.relay_worker_witnessed_soundwave === true;
+  const soundwaveFutureContact = state.flags.soundwave_future_contact;
+  const soundwaveUsefulEvidence =
+    state.flags.soundwave_information_shared === "full" ||
+    typeof state.flags.soundwave_utility_offer === "string" ||
+    state.flags.soundwave_material_status === "offered_return";
+
+  const soundwaveFinalAssessment = soundwaveContactCompromised
+    ? `“Classification: compromised contact.”
+
+A human worker witnessed or interrupted the active Decepticon transmission. Soundwave now treats the relay unit, the site, and the trio as exposed variables.
+
+“Human authority awareness: possible. Remote containment required.”`
+    : soundwaveDeceptionDetected
+      ? `“Classification: deceptive intruders.”
+
+Soundwave has recorded statements contradicted by telemetry, visible evidence, or later admissions.
+
+“Reliability: low. Curiosity: high. Further contact: restricted pending verification.”`
+      : soundwaveFutureContact === "refused"
+        ? `“Classification: contact refused.”
+
+The trio answered enough to be identified but rejected continued communication.
+
+“Data retained. No invitation extended.”`
+        : soundwaveFutureContact === "accepted" ||
+            soundwaveFutureContact === "conditional" ||
+            (soundwaveFutureContact === "friend_safety_condition" && soundwaveUsefulEvidence)
+          ? `“Classification: potential assets.”
+
+The trio has demonstrated initiative, some useful knowledge, and willingness to maintain a controlled channel.
+
+“Trust: unestablished. Utility: possible. Further observation authorized.”`
+          : `“Classification: independent observers.”
+
+The trio remains cautious, uncommitted, and unwilling to surrender control of future contact.
+
+“Hostility: unconfirmed. Utility: possible. Autonomy noted.”`;
+
   const renderText = (text: string) =>
     text
       .replaceAll("{{player}}", state.character.name)
@@ -110,7 +156,8 @@ Hound answers, “They stopped following individual Autobots and started studyin
       .replaceAll("{{relayContactPreparation}}", relayContactPreparation)
       .replaceAll("{{soundwaveEvidenceNotice}}", soundwaveEvidenceNotice)
       .replaceAll("{{relayReturnSummary}}", relayReturnSummary)
-      .replaceAll("{{relayEvidenceReview}}", relayEvidenceReview);
+      .replaceAll("{{relayEvidenceReview}}", relayEvidenceReview)
+      .replaceAll("{{soundwaveFinalAssessment}}", soundwaveFinalAssessment);
 
   const appearanceSummary = useMemo(() => {
     if (state.character.origin === "human" && state.character.humanAppearance) {
