@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import InventoryPanel from "./InventoryPanel";
 import { getLocationLabel, getOutageEffect } from "../data/humanLocation";
 import { STORY } from "../data/storyPack";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
@@ -13,6 +14,7 @@ type Props = {
 export default function StoryScreen({ initialState, onRestart }: Props) {
   const [state, setState] = useState(initialState);
   const [saveMessage, setSaveMessage] = useState("");
+  const [inventoryOpen, setInventoryOpen] = useState(false);
 
   const scene = STORY[state.currentSceneId];
   const friendOneName = state.character.friends?.[0]?.name ?? "Friend One";
@@ -116,10 +118,6 @@ Hound answers, “They stopped following individual Autobots and started studyin
     state.flags.relay_guard_interrupted_soundwave === true ||
     state.flags.relay_worker_witnessed_soundwave === true;
   const soundwaveFutureContact = state.flags.soundwave_future_contact;
-  const soundwaveUsefulEvidence =
-    state.flags.soundwave_information_shared === "full" ||
-    typeof state.flags.soundwave_utility_offer === "string" ||
-    state.flags.soundwave_material_status === "offered_return";
   const soundwaveRelationship = state.relationships.soundwave ?? 0;
   const soundwaveDeviceEligible =
     !soundwaveContactCompromised &&
@@ -195,6 +193,7 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
 
     const next = choose(state, selected);
     setState(next);
+    setInventoryOpen(false);
     setSaveMessage("");
   };
 
@@ -238,7 +237,15 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
             </div>
             <h1>{renderText(scene.title)}</h1>
           </div>
-          <button className="secondary-button compact" onClick={handleSave}>Save</button>
+          <div className="story-header-actions">
+            <button
+              className="secondary-button compact"
+              onClick={() => setInventoryOpen(true)}
+            >
+              Inventory ({state.inventory.length})
+            </button>
+            <button className="secondary-button compact" onClick={handleSave}>Save</button>
+          </div>
         </header>
 
         <div className="character-strip">
@@ -292,6 +299,12 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
 
         {saveMessage && <div className="save-message">{saveMessage}</div>}
       </section>
+
+      <InventoryPanel
+        state={state}
+        open={inventoryOpen}
+        onClose={() => setInventoryOpen(false)}
+      />
     </main>
   );
 }
