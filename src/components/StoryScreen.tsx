@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getLocationLabel, getOutageEffect } from "../data/humanLocation";
-import { STORY } from "../data/storySoundwaveAssessment";
+import { STORY } from "../data/storySoundwaveDevice";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
 import { saveGame } from "../services/saveService";
 import type { GameState } from "../types/game";
@@ -113,6 +113,15 @@ Hound answers, “They stopped following individual Autobots and started studyin
     state.flags.soundwave_information_shared === "full" ||
     typeof state.flags.soundwave_utility_offer === "string" ||
     state.flags.soundwave_material_status === "offered_return";
+  const soundwaveRelationship = state.relationships.soundwave ?? 0;
+  const soundwaveDeviceEligible =
+    !soundwaveContactCompromised &&
+    !soundwaveDeceptionDetected &&
+    ((soundwaveFutureContact === "accepted" && soundwaveRelationship >= 3) ||
+      ((soundwaveFutureContact === "conditional" ||
+        soundwaveFutureContact === "friend_safety_condition" ||
+        soundwaveFutureContact === "mutual_value") &&
+        soundwaveRelationship >= 2));
 
   const soundwaveFinalAssessment = soundwaveContactCompromised
     ? `“Classification: compromised contact.”
@@ -132,17 +141,15 @@ Soundwave has recorded statements contradicted by telemetry, visible evidence, o
 The trio answered enough to be identified but rejected continued communication.
 
 “Data retained. No invitation extended.”`
-        : soundwaveFutureContact === "accepted" ||
-            soundwaveFutureContact === "conditional" ||
-            (soundwaveFutureContact === "friend_safety_condition" && soundwaveUsefulEvidence)
+        : soundwaveDeviceEligible
           ? `“Classification: potential assets.”
 
-The trio has demonstrated initiative, some useful knowledge, and willingness to maintain a controlled channel.
+The trio has demonstrated initiative, useful knowledge, and willingness to maintain a controlled channel.
 
 “Trust: unestablished. Utility: possible. Further observation authorized.”`
           : `“Classification: independent observers.”
 
-The trio remains cautious, uncommitted, and unwilling to surrender control of future contact.
+The trio remains cautious, uncommitted, or not yet useful enough to justify deeper access.
 
 “Hostility: unconfirmed. Utility: possible. Autonomy noted.”`;
 
