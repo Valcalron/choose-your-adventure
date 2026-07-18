@@ -3,31 +3,37 @@ import { STORY as BASE_STORY } from "./storySoundwaveDevice";
 
 const humanStart: StoryScene = {
   ...BASE_STORY.HUMAN_START,
-  choices: BASE_STORY.HUMAN_START.choices.map((choice) => {
-    if (choice.id === "human_investigate") {
-      return {
-        ...choice,
-        nextSceneId: "HUMAN_RELAY_TRIP_PREPARATION"
-      };
-    }
+  choices: BASE_STORY.HUMAN_START.choices
+    .filter((choice) => choice.id !== "human_report")
+    .map((choice) => {
+      if (choice.id === "human_investigate") {
+        return {
+          ...choice,
+          nextSceneId: "HUMAN_RELAY_TRIP_PREPARATION",
+          effects: [
+            ...(choice.effects ?? []),
+            { type: "flag", key: "reported_relay_findings", value: false }
+          ]
+        };
+      }
 
-    if (choice.id === "human_cautious") {
-      return {
-        ...choice,
-        label: "Keep the three of you together, spend time gathering reports, and map the Autobots' movements.",
-        nextSceneId: "HUMAN_FIND_ARK_MAP",
-        timeCostHours: 48,
-        effects: [
-          ...(choice.effects ?? []),
-          { type: "flag", key: "researched_autobots", value: true },
-          { type: "flag", key: "built_autobot_sighting_map", value: true },
-          { type: "flag", key: "map_built_without_direct_contact", value: true }
-        ]
-      };
-    }
+      if (choice.id === "human_cautious") {
+        return {
+          ...choice,
+          label: "Keep the three of you together, spend time gathering reports, and map the Autobots' movements.",
+          nextSceneId: "HUMAN_FIND_ARK_MAP",
+          timeCostHours: 48,
+          effects: [
+            ...(choice.effects ?? []),
+            { type: "flag", key: "researched_autobots", value: true },
+            { type: "flag", key: "built_autobot_sighting_map", value: true },
+            { type: "flag", key: "map_built_without_direct_contact", value: true }
+          ]
+        };
+      }
 
-    return choice;
-  })
+      return choice;
+    })
 };
 
 const humanRun: StoryScene = {
@@ -118,6 +124,66 @@ You have pockets for small items. A backpack would make it easier to carry photo
   ]
 };
 
+const relayReturnHome: StoryScene = {
+  ...BASE_STORY.HUMAN_RELAY_RETURN_HOME,
+  choices: [
+    {
+      id: "human_report_relay_findings_for_autobots",
+      label: "Report what the trio found and ask that the information be passed to the Autobots.",
+      nextSceneId: "HUMAN_RELAY_REPORT_FINDINGS",
+      timeCostHours: 1,
+      requirements: [
+        { type: "flag_not", key: "contacted_soundwave_at_relay", equals: true },
+        { type: "flag_not", key: "reported_relay_findings", equals: true }
+      ],
+      effects: [
+        { type: "flag", key: "reported_relay_findings", value: true },
+        { type: "flag", key: "seeking_faction", value: "autobots" },
+        { type: "flag", key: "pivoted_from_decepticon_investigation_to_autobots", value: true },
+        { type: "stat", group: "faction", key: "autobot", amount: 1 },
+        { type: "stat", group: "personality", key: "honesty", amount: 1 }
+      ]
+    },
+    ...BASE_STORY.HUMAN_RELAY_RETURN_HOME.choices
+  ]
+};
+
+const relayReportFindings: StoryScene = {
+  id: "HUMAN_RELAY_REPORT_FINDINGS",
+  origin: "human",
+  chapter: 1,
+  title: "Report From Inside the Perimeter",
+  body: `The authorities already know the relay station was attacked.
+
+They do not know everything the three of you found after the fighting moved on.
+
+You call the information number being repeated with the emergency broadcasts. At first, the dispatcher assumes you are reporting something seen on television. That changes when you describe the dark Cybertronian device, its purple pulse, the way it was connected directly to the power equipment, and the evidence the trio brought away from the site.
+
+The call is transferred to someone taking detailed reports about Cybertronian technology.
+
+You explain that the equipment was left by the Decepticons and that the Autobots should be told what remained at the station. The person on the line records the location, the device description, and everything the trio is willing to share. They cannot promise that an Autobot will contact you.
+
+{{friendOne}} looks toward the notes and photographs.
+
+“At least the information is moving toward the people trying to stop them.”
+
+{{friendTwo}} looks at the Autobot sightings already gathered.
+
+“And if we want to make sure the Autobots know, we may still have to find them ourselves.”`,
+  choices: [
+    {
+      id: "human_turn_relay_report_toward_autobots",
+      label: "Turn away from the Decepticon trail and begin looking for the Autobots.",
+      nextSceneId: "HUMAN_RELAY_RESEARCH_AUTOBOTS",
+      timeCostHours: 1,
+      effects: [
+        { type: "flag", key: "researched_autobots", value: true },
+        { type: "stat", group: "faction", key: "autobot", amount: 1 }
+      ]
+    }
+  ]
+};
+
 const relaySearchSite: StoryScene = {
   ...BASE_STORY.HUMAN_RELAY_SEARCH_SITE,
   body: `${BASE_STORY.HUMAN_RELAY_SEARCH_SITE.body}
@@ -140,6 +206,8 @@ export const STORY: Record<string, StoryScene> = {
   HUMAN_LEAVE_STATE: humanLeaveState,
   HUMAN_FIND_ARK_MAP: findArkMap,
   HUMAN_RELAY_TRIP_PREPARATION: relayTripPreparation,
+  HUMAN_RELAY_RETURN_HOME: relayReturnHome,
+  HUMAN_RELAY_REPORT_FINDINGS: relayReportFindings,
   HUMAN_RELAY_SEARCH_SITE: relaySearchSite,
   HUMAN_SOUNDWAVE_RELAY_DEVICE_ALARM: relayDeviceAlarm
 };
