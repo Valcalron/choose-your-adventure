@@ -3,7 +3,7 @@ import CharacterCreationWithFriends from "./components/CharacterCreationWithFrie
 import IntroPage from "./components/IntroPage";
 import StoryScreen from "./components/StoryScreen";
 import { AMERICAN_NORTHWEST_LOCATION } from "./data/humanLocation";
-import { createInitialState } from "./engine/gameEngine";
+import { applyNamedCharacterRoute, createInitialState } from "./engine/gameEngine";
 import { clearLocalSave, loadLocalSave } from "./services/saveService";
 import type { GameState, PlayerCharacter } from "./types/game";
 
@@ -16,10 +16,10 @@ const loadNormalizedSave = (): GameState | null => {
   const saved = loadLocalSave();
   if (!saved) return null;
 
-  return {
+  return applyNamedCharacterRoute({
     ...saved,
     character: withNorthwestHome(saved.character)
-  };
+  });
 };
 
 export default function App() {
