@@ -14,6 +14,7 @@ type Props = {
 export default function StoryScreen({ initialState, onRestart }: Props) {
   const [state, setState] = useState(initialState);
   const [saveMessage, setSaveMessage] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const [inventoryOpen, setInventoryOpen] = useState(false);
 
   const scene = STORY[state.currentSceneId];
@@ -201,11 +202,18 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
   };
 
   const handleSave = async () => {
+    if (isSaving) return;
+
+    setIsSaving(true);
+    setSaveMessage("Saving...");
+
     try {
       await saveGame(state);
       setSaveMessage("Game saved.");
     } catch (error) {
       setSaveMessage(error instanceof Error ? error.message : "Could not save.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -229,6 +237,12 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
       ? Math.max(2, scene.chapter)
       : scene.chapter;
   const bodyParagraphs = renderText(scene.body).split(/\n\s*\n/);
+  const saveNotificationClass =
+    saveMessage === "Game saved."
+      ? "save-notification success"
+      : saveMessage === "Saving..."
+        ? "save-notification pending"
+        : "save-notification error";
 
   return (
     <main className="screen story-screen">
@@ -247,9 +261,21 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
             >
               Inventory ({state.inventory.length})
             </button>
-            <button className="secondary-button compact" onClick={handleSave}>Save</button>
+            <button
+              className="secondary-button compact"
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving..." : saveMessage === "Game saved." ? "Saved" : "Save"}
+            </button>
           </div>
         </header>
+
+        {saveMessage && (
+          <div className={saveNotificationClass} role="status" aria-live="polite">
+            {saveMessage}
+          </div>
+        )}
 
         <div className="character-strip">
           <strong>{state.character.name}</strong>
@@ -299,8 +325,6 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
             <button className="primary-button" onClick={onRestart}>Create Another Character</button>
           </div>
         )}
-
-        {saveMessage && <div className="save-message">{saveMessage}</div>}
       </section>
 
       <InventoryPanel
