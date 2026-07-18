@@ -107,6 +107,12 @@ export type Effect =
   | { type: "inventory_add"; item: string }
   | { type: "inventory_remove"; item: string };
 
+export type ChanceRedirect = {
+  probability: number;
+  nextSceneId: string;
+  effects?: Effect[];
+};
+
 export type StoryChoice = {
   id: string;
   label: string;
@@ -114,6 +120,7 @@ export type StoryChoice = {
   timeCostHours?: number;
   requirements?: Requirement[];
   effects?: Effect[];
+  chanceRedirect?: ChanceRedirect;
 };
 
 export type StoryScene = {
