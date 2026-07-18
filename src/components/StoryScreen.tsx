@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import InventoryPanel from "./InventoryPanel";
-import { getLocationLabel, getOutageEffect } from "../data/humanLocation";
-import { STORY } from "../data/storyRelayApproach";
+import { getOutageEffect } from "../data/humanLocation";
+import { STORY } from "../data/storyNamedRoutes";
 import { choose, isChoiceAvailable } from "../engine/gameEngine";
 import { saveGame } from "../services/saveService";
 import type { GameState } from "../types/game";
@@ -77,7 +77,9 @@ Hound answers, “They stopped following individual Autobots and started studyin
     soundwaveEvidenceNoticeParts.push("“Visual recording detected.”");
   }
   if (searchedRelaySite) {
-    soundwaveEvidenceNoticeParts.push("“Site-survey behavior detected. State what you observed.”");
+    soundwaveEvidenceNoticeParts.push(
+      "“Site-survey behavior detected. State what you observed.”"
+    );
   }
   if (completedRelayInvestigations.length === 3) {
     soundwaveEvidenceNoticeParts.push(
@@ -86,11 +88,12 @@ Hound answers, “They stopped following individual Autobots and started studyin
   }
   const soundwaveEvidenceNotice = soundwaveEvidenceNoticeParts.join("\n\n");
 
-  const relayReturnSummary = state.flags.contacted_soundwave_at_relay === true
-    ? "Soundwave answered the instant the communicator activated. Whether you gave him names or fled without answering, he now knows that three humans entered the site and deliberately touched Decepticon technology."
-    : hasRecoveredRelayDevice
-      ? "The recovered Decepticon device came with you. Its warning tone eventually stopped, but none of you knows whether it transmitted an alert before going quiet."
-      : "The Decepticon device remained at the station. Whatever you photographed, sketched, observed, or recovered separately came home with you.";
+  const relayReturnSummary =
+    state.flags.contacted_soundwave_at_relay === true
+      ? "Soundwave answered the instant the communicator activated. Whether you gave him names or fled without answering, he now knows that three humans entered the site and deliberately touched Decepticon technology."
+      : hasRecoveredRelayDevice
+        ? "The recovered Decepticon device came with you. Its warning tone eventually stopped, but none of you knows whether it transmitted an alert before going quiet."
+        : "The Decepticon device remained at the station. Whatever you photographed, sketched, observed, or recovered separately came home with you.";
 
   const relayEvidenceReviewParts = [
     documentedRelayDevice
@@ -106,9 +109,10 @@ Hound answers, “They stopped following individual Autobots and started studyin
       ? "The communication itself confirmed that Soundwave could receive an alert from the unit immediately."
       : null
   ].filter((item): item is string => item !== null);
-  const relayEvidenceReview = relayEvidenceReviewParts.length > 0
-    ? relayEvidenceReviewParts.join("\n\n")
-    : "You left with observations rather than physical proof, but the pattern of damage still confirms that the Decepticons used the station as an energy source.";
+  const relayEvidenceReview =
+    relayEvidenceReviewParts.length > 0
+      ? relayEvidenceReviewParts.join("\n\n")
+      : "You left with observations rather than physical proof, but the pattern of damage still confirms that the Decepticons used the station as an energy source.";
 
   const soundwaveDeceptionDetected =
     state.flags.lied_to_soundwave_at_first_contact === true ||
@@ -119,10 +123,6 @@ Hound answers, “They stopped following individual Autobots and started studyin
     state.flags.relay_guard_interrupted_soundwave === true ||
     state.flags.relay_worker_witnessed_soundwave === true;
   const soundwaveFutureContact = state.flags.soundwave_future_contact;
-  const soundwaveUsefulEvidence =
-    state.flags.soundwave_information_shared === "full" ||
-    typeof state.flags.soundwave_utility_offer === "string" ||
-    state.flags.soundwave_material_status === "offered_return";
   const soundwaveRelationship = state.relationships.soundwave ?? 0;
   const soundwaveDeviceEligible =
     !soundwaveContactCompromised &&
@@ -168,7 +168,10 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
       .replaceAll("{{player}}", state.character.name)
       .replaceAll("{{friendOne}}", friendOneName)
       .replaceAll("{{friendTwo}}", friendTwoName)
-      .replaceAll("{{outageEffect}}", getOutageEffect(state.character.humanLocation))
+      .replaceAll(
+        "{{outageEffect}}",
+        getOutageEffect(state.character.humanLocation)
+      )
       .replaceAll("{{sideswipeRecognition}}", sideswipeRecognition)
       .replaceAll("{{relayContactPreparation}}", relayContactPreparation)
       .replaceAll("{{soundwaveEvidenceNotice}}", soundwaveEvidenceNotice)
@@ -177,20 +180,6 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
       .replaceAll("{{soundwaveFinalAssessment}}", soundwaveFinalAssessment)
       .replaceAll("{{relayComponentCarry}}", relayComponentCarry)
       .replaceAll("{{relayDeviceCarry}}", relayDeviceCarry);
-
-  const appearanceSummary = useMemo(() => {
-    if (state.character.origin === "human" && state.character.humanAppearance) {
-      const a = state.character.humanAppearance;
-      return `${a.height}, ${a.build}, ${a.hairColor} ${a.hairStyle} hair, ${a.eyeColor} eyes`;
-    }
-
-    if (state.character.cybertronianAppearance) {
-      const a = state.character.cybertronianAppearance;
-      return `${a.frameHeight} ${a.frameBuild} frame, ${a.primaryColor} and ${a.secondaryColor}, ${a.opticColor} optics`;
-    }
-
-    return "";
-  }, [state.character]);
 
   const handleChoice = (choiceId: string) => {
     const selected = scene.choices.find((choice) => choice.id === choiceId);
@@ -223,7 +212,9 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
         <section className="panel">
           <h1>Missing Scene</h1>
           <p>The scene ID “{state.currentSceneId}” does not exist.</p>
-          <button className="primary-button" onClick={onRestart}>Restart</button>
+          <button className="primary-button" onClick={onRestart}>
+            Restart
+          </button>
         </section>
       </main>
     );
@@ -266,7 +257,11 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
               onClick={handleSave}
               disabled={isSaving}
             >
-              {isSaving ? "Saving..." : saveMessage === "Game saved." ? "Saved" : "Save"}
+              {isSaving
+                ? "Saving..."
+                : saveMessage === "Game saved."
+                  ? "Saved"
+                  : "Save"}
             </button>
           </div>
         </header>
@@ -277,18 +272,10 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
           </div>
         )}
 
-        <div className="character-strip">
-          <strong>{state.character.name}</strong>
-          <span>{appearanceSummary}</span>
-          {state.character.origin === "human" && (
-            <span>Home: {getLocationLabel(state.character.humanLocation)}</span>
-          )}
-          <span>Friends: {friendOneName} and {friendTwoName}</span>
-          {state.character.altMode && <span>Alt mode: {state.character.altMode.specificForm}</span>}
-        </div>
-
         <article className="story-text">
-          {scene.speaker && <div className="speaker">{renderText(scene.speaker)}</div>}
+          {scene.speaker && (
+            <div className="speaker">{renderText(scene.speaker)}</div>
+          )}
           {bodyParagraphs.map((paragraph, index) => (
             <p key={`${scene.id}-paragraph-${index}`}>{paragraph}</p>
           ))}
@@ -309,7 +296,9 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
         )}
 
         {!scene.isEnding && availableChoices.length === 0 && (
-          <div className="save-message">This route is ready for its next story scene.</div>
+          <div className="save-message">
+            This route is ready for its next story scene.
+          </div>
         )}
 
         {scene.isEnding && (
@@ -319,10 +308,16 @@ The trio remains cautious, uncommitted, or not yet useful enough to justify deep
               <span>Autobot: {state.faction.autobot}</span>
               <span>Decepticon: {state.faction.decepticon}</span>
               <span>Independent: {state.faction.independent}</span>
-              <span>{friendOneName}: {state.relationships.friendOne ?? 0}</span>
-              <span>{friendTwoName}: {state.relationships.friendTwo ?? 0}</span>
+              <span>
+                {friendOneName}: {state.relationships.friendOne ?? 0}
+              </span>
+              <span>
+                {friendTwoName}: {state.relationships.friendTwo ?? 0}
+              </span>
             </div>
-            <button className="primary-button" onClick={onRestart}>Create Another Character</button>
+            <button className="primary-button" onClick={onRestart}>
+              Create Another Character
+            </button>
           </div>
         )}
       </section>
