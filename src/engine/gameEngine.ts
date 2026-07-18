@@ -6,29 +6,112 @@ import type {
   StoryChoice
 } from "../types/game";
 
-export const createInitialState = (character: PlayerCharacter): GameState => ({
-  currentSceneId: character.origin === "human" ? "HUMAN_START" : "CYBER_START",
-  character,
-  elapsedHours: 0,
-  faction: {
-    autobot: 0,
-    decepticon: 0,
-    independent: 0
-  },
-  personality: {
-    mercy: 0,
-    aggression: 0,
-    honesty: 0,
-    ambition: 0,
-    curiosity: 0,
-    obedience: 0,
-    leadership: 0
-  },
-  flags: {},
-  relationships: { friendOne: 5, friendTwo: 5 },
-  inventory: [],
-  history: []
-});
+type NamedCharacterRoute = "raider" | "prizm" | "juci";
+
+const getNamedCharacterRoute = (
+  character: PlayerCharacter
+): NamedCharacterRoute | null => {
+  const normalizedName = character.name.trim().toLowerCase();
+
+  if (normalizedName === "raider") return "raider";
+  if (normalizedName === "prizm") return "prizm";
+  if (normalizedName === "juci") return "juci";
+
+  return null;
+};
+
+export const applyNamedCharacterRoute = (state: GameState): GameState => {
+  const route = getNamedCharacterRoute(state.character);
+  if (!route || state.flags.named_character_route === route) return state;
+
+  const sharedFlags = {
+    ...state.flags,
+    named_character_route: route,
+    decepticon_name_affinity: true,
+    decepticon_luck_bonus: 1
+  };
+  const faction = {
+    ...state.faction,
+    decepticon: Math.max(state.faction.decepticon ?? 0, 1)
+  };
+
+  if (route === "raider") {
+    return {
+      ...state,
+      faction,
+      flags: {
+        ...sharedFlags,
+        primary_love_interest: "soundwave",
+        soundwave_is_telepath: true,
+        soundwave_telepathic_attention: true
+      },
+      relationships: {
+        ...state.relationships,
+        soundwave: Math.max(state.relationships.soundwave ?? 0, 2)
+      }
+    };
+  }
+
+  if (route === "prizm") {
+    return {
+      ...state,
+      faction,
+      flags: {
+        ...sharedFlags,
+        primary_love_interest: "megatron",
+        megatron_curiosity: true,
+        megatron_interest_is_restrained: true
+      },
+      relationships: {
+        ...state.relationships,
+        megatron: Math.max(state.relationships.megatron ?? 0, 2)
+      }
+    };
+  }
+
+  return {
+    ...state,
+    faction,
+    flags: {
+      ...sharedFlags,
+      primary_love_interest: "shockwave",
+      shockwave_on_cybertron: true,
+      earth_decepticon_connection: "skywarp",
+      starscream_rivalry: true
+    },
+    relationships: {
+      ...state.relationships,
+      shockwave: Math.max(state.relationships.shockwave ?? 0, 2),
+      skywarp: Math.max(state.relationships.skywarp ?? 0, 1),
+      starscream: Math.min(state.relationships.starscream ?? 0, -2)
+    }
+  };
+};
+
+export const createInitialState = (character: PlayerCharacter): GameState =>
+  applyNamedCharacterRoute({
+    currentSceneId: character.origin === "human" ? "HUMAN_START" : "CYBER_START",
+    character,
+    elapsedHours: 0,
+    faction: {
+      autobot: 0,
+      decepticon: 0,
+      independent: 0
+    },
+    personality: {
+      mercy: 0,
+      aggression: 0,
+      honesty: 0,
+      ambition: 0,
+      curiosity: 0,
+      obedience: 0,
+      leadership: 0
+    },
+    flags: {},
+    relationships: { friendOne: 5, friendTwo: 5 },
+    inventory: [],
+    history: []
+  });
 
 export const meetsRequirement = (
   state: GameState,
