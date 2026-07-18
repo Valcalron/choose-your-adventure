@@ -3,14 +3,82 @@ import { STORY as BASE_STORY } from "./storySoundwaveDevice";
 
 const humanStart: StoryScene = {
   ...BASE_STORY.HUMAN_START,
-  choices: BASE_STORY.HUMAN_START.choices.map((choice) =>
-    choice.id === "human_investigate"
-      ? {
-          ...choice,
-          nextSceneId: "HUMAN_RELAY_TRIP_PREPARATION"
-        }
-      : choice
-  )
+  choices: BASE_STORY.HUMAN_START.choices.map((choice) => {
+    if (choice.id === "human_investigate") {
+      return {
+        ...choice,
+        nextSceneId: "HUMAN_RELAY_TRIP_PREPARATION"
+      };
+    }
+
+    if (choice.id === "human_cautious") {
+      return {
+        ...choice,
+        label: "Keep the three of you together, spend time gathering reports, and map the Autobots' movements.",
+        nextSceneId: "HUMAN_FIND_ARK_MAP",
+        timeCostHours: 48,
+        effects: [
+          ...(choice.effects ?? []),
+          { type: "flag", key: "researched_autobots", value: true },
+          { type: "flag", key: "built_autobot_sighting_map", value: true },
+          { type: "flag", key: "map_built_without_direct_contact", value: true }
+        ]
+      };
+    }
+
+    return choice;
+  })
+};
+
+const humanRun: StoryScene = {
+  ...BASE_STORY.HUMAN_RUN,
+  choices: BASE_STORY.HUMAN_RUN.choices
+    .filter((choice) => choice.id !== "human_run_leave_area")
+    .map((choice) =>
+      choice.id === "human_run_leave_state"
+        ? {
+            ...choice,
+            label: "Get in the car, leave the state, and stay out of the Cybertronian conflict."
+          }
+        : choice
+    )
+};
+
+const humanLeaveState: StoryScene = {
+  id: "HUMAN_LEAVE_STATE",
+  origin: "human",
+  chapter: 1,
+  title: "Distance From the War",
+  body: `The three of you get into the car and leave.
+
+There is no investigation, no attempt to identify another disguised vehicle, and no plan to find either faction. You take the first open road leading away from the state and keep moving.
+
+Traffic thickens near the state line. Radio stations repeat warnings about alien machines, damaged power systems, and roads closed after sightings. Whenever a report suggests Cybertronian activity ahead, you change direction.
+
+{{friendOne}} and {{friendTwo}} remain with you. All three of you agree that surviving this means refusing to become part of it.
+
+The Autobots and Decepticons continue their war on Earth, but the trio does not go looking for them again.
+
+ENDING: DISTANCE FROM THE WAR`,
+  choices: [],
+  isEnding: true
+};
+
+const findArkMap: StoryScene = {
+  ...BASE_STORY.HUMAN_FIND_ARK_MAP,
+  body: `The three of you spread a road map across the table.
+
+For two days, you gather every credible report available from television, radio, newspapers, and eyewitness calls. Information is slow and incomplete in 1984, but the Autobots keep appearing often enough to leave a pattern.
+
+They travel as ground vehicles. After rescues and battles, they return to ordinary roads instead of flying away or disappearing over the ocean. Wherever they are staying, they must be able to reach it by road.
+
+{{friendOne}} marks where Autobots have been seen and when each sighting occurred.
+
+{{friendTwo}} traces the direction they arrived from and the roads they used when leaving.
+
+You compare reports, cross out obvious mistakes, and watch for the places where several routes begin pointing toward the same broad region.
+
+The map cannot reveal an exact entrance. It can show where the Autobots repeatedly disappear from public view.`
 };
 
 const relayTripPreparation: StoryScene = {
@@ -68,6 +136,9 @@ const relayDeviceAlarm: StoryScene = {
 export const STORY: Record<string, StoryScene> = {
   ...BASE_STORY,
   HUMAN_START: humanStart,
+  HUMAN_RUN: humanRun,
+  HUMAN_LEAVE_STATE: humanLeaveState,
+  HUMAN_FIND_ARK_MAP: findArkMap,
   HUMAN_RELAY_TRIP_PREPARATION: relayTripPreparation,
   HUMAN_RELAY_SEARCH_SITE: relaySearchSite,
   HUMAN_SOUNDWAVE_RELAY_DEVICE_ALARM: relayDeviceAlarm
