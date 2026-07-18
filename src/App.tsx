@@ -24,7 +24,20 @@ const loadNormalizedSave = (): GameState | null => {
 
 export default function App() {
   const [hasEntered, setHasEntered] = useState(false);
-  const [gameState, setGameState] = useState<GameState | null>(loadNormalizedSave);
+  const [savedGame, setSavedGame] = useState<GameState | null>(loadNormalizedSave);
+  const [gameState, setGameState] = useState<GameState | null>(null);
+
+  const continueSavedGame = () => {
+    if (!savedGame) return;
+
+    setGameState(savedGame);
+    setHasEntered(true);
+  };
+
+  const beginNewGame = () => {
+    setGameState(null);
+    setHasEntered(true);
+  };
 
   const startGame = (character: PlayerCharacter) => {
     setGameState(createInitialState(withNorthwestHome(character)));
@@ -32,12 +45,19 @@ export default function App() {
 
   const restart = () => {
     clearLocalSave();
+    setSavedGame(null);
     setGameState(null);
     setHasEntered(false);
   };
 
   if (!hasEntered) {
-    return <IntroPage onContinue={() => setHasEntered(true)} />;
+    return (
+      <IntroPage
+        hasSavedGame={savedGame !== null}
+        onContinueSavedGame={continueSavedGame}
+        onStartNewGame={beginNewGame}
+      />
+    );
   }
 
   if (!gameState) {
