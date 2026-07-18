@@ -129,13 +129,27 @@ export const choose = (state: GameState, choice: StoryChoice): GameState => {
     throw new Error("This choice is not available.");
   }
 
-  const withEffects = (choice.effects ?? []).reduce(applyEffect, state);
+  const withChoiceEffects = (choice.effects ?? []).reduce(applyEffect, state);
+  const probability = choice.chanceRedirect?.probability ?? 0;
+  const redirected =
+    choice.chanceRedirect !== undefined &&
+    probability > 0 &&
+    Math.random() < Math.min(1, probability);
+  const withChanceEffects = redirected
+    ? (choice.chanceRedirect?.effects ?? []).reduce(applyEffect, withChoiceEffects)
+    : withChoiceEffects;
+  const nextSceneId = redirected
+    ? choice.chanceRedirect!.nextSceneId
+    : choice.nextSceneId;
   const hoursPassed = choice.timeCostHours ?? 1;
 
   return {
-    ...withEffects,
-    currentSceneId: choice.nextSceneId,
-    elapsedHours: (withEffects.elapsedHours ?? 0) + hoursPassed,
-    history: [...withEffects.history, `${state.currentSceneId}:${choice.id}`]
+    ...withChanceEffects,
+    currentSceneId: nextSceneId,
+    elapsedHours: (withChanceEffects.elapsedHours ?? 0) + hoursPassed,
+    history: [
+      ...withChanceEffects.history,
+      `${state.currentSceneId}:${choice.id}${redirected ? ":chance" : ""}`
+    ]
   };
 };
